@@ -1,12 +1,36 @@
 const router = require('express').Router()
+const platform  = require('../utils/platform.js');
+const {subscribeToEvents} = require('../utils/subscription')
+
+// const rc = require('ringcentral');
+const fs = require('fs')
 
 
+const REDIRECT_HOST = process.env.REDIRECT_HOST;
+const TOKEN_TEMP_FILE = '.bot-auth';
+// const CLIENT_ID = process.env.CLIENT_ID;
+// const CLIENT_SECRET = process.env.CLIENT_SECRET;
+// const RINGCENTRAL_ENV = process.env.RINGCENTRAL_ENV;
+// require('../../.bot-auth');
 
+// rcsdk = new rc({
+//     server: RINGCENTRAL_ENV,
+//     appKey: CLIENT_ID,
+//     appSecret: CLIENT_SECRET
+// });
+
+// let platform = rcsdk.platform();
+// if (fs.existsSync(TOKEN_TEMP_FILE)) {
+//     var data = JSON.parse(fs.readFileSync(TOKEN_TEMP_FILE));
+//     console.log("Reusing access key from cache: " + data.access_token)
+//     platform.auth().setData(data);
+// }
 
 /**
  * Authorize
  */
 router.get('/oauth', (req, res) => {
+
     if (!req.query.code) {
         res.status(500).send({ "Error": "No authorization token received." }).end();
         console.log("RingCentral did not transmit an authorizaton token.");
@@ -14,9 +38,11 @@ router.get('/oauth', (req, res) => {
         var creatorId = req.query.creator_extension_id;
         platform.login({
             code: req.query.code,
-            redirectUri: REDIRECT_HOST + '/oauth'
+            redirectUri: REDIRECT_HOST + '/auth/oauth'
         }).then(function (authResponse) {
-            subscribeToEvents();
+            console.log('Authenticated');
+            subscribeToEvents()
+            console.log('authResponse',authResponse);
         }).catch(function (e) {
             console.error(e)
             res.status(500).send("Error installing bot and subscribing to events: ", e).end()
@@ -30,7 +56,12 @@ router.get('/oauth', (req, res) => {
  * 
  */
 router.post('/oauth', (req, res) => {
-    res.status(200);
+
+    let body = req.body
+
+    console.log('status',platform.loggedIn());
+    console.log("body " + req.body)
+    console.log("Stashing access key: " + req.body.access_token)
     if (req.body.access_token) {
         console.log("Verifying redirect URL for bot server.")
 
@@ -54,7 +85,7 @@ router.post('/oauth', (req, res) => {
             res.status(500).send("Error: ", e).end();
         }
     }
-    res.send("").end()
+    res.status(200).send("").end()
 })
 
 

@@ -30,6 +30,9 @@ router.post('/callback', async (req, res) => {
         if (req.body.ownerId == req.body.body.creatorId) {
             console.log("Ignoring message posted by bot.");
         }
+        else if (req.body.body.eventType == "ping"){
+            sendMessage("I do not understand pong", req.body.body.groupId)
+        }
         else if (req.body.body.text === "check-in") {
             sendCard(rsvp(), req.body.body.groupId);
         }

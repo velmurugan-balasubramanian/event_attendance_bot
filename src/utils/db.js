@@ -11,9 +11,19 @@ const create = async (card_id, conversation_id, creator_id, creator_email, ticke
     return dbResults;
 }
 
+// create table teams ( team_id varchar(1000) Primary key, team_name varchar(1000), description varchar(1000), status boolean, memebers varchar(100) [], is_public boolean, created_at timestamptz, modified_at timestamptz)
+const createTeam = async (team) => {
+    const dbQuery = "INSERT INTO teams (team_id, team_name, description, status, memebers, is_public, created_at , modified_at  ) values ($1, $2, $3, $4,$5, $6, $7, $8) returning *"
+    const dbValubes = [team.id, team.name , team.description , team.status , team.members , team.isPublic , team.creationTime , team.lastModifiedTime];
+    const dbResults = await db.query(dbQuery, dbValubes)
+
+    return dbResults;
+}
+
 
 module.exports = {
-    create:create
+    create:create,
+    createTeam:createTeam
 }
 
 

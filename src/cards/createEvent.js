@@ -1,4 +1,4 @@
-const createEvent = () => {
+const createEvent = (event_origin, event_owner ) => {
 
     let card = {
         "type": "AdaptiveCard",
@@ -9,6 +9,20 @@ const createEvent = () => {
                 "type": "Input.Text",
                 "id": "action",
                 "value":"create_event",
+                "isVisible":false,
+                "placeholder": "Enter a name for the event",
+            },
+            {
+                "type": "Input.Text",
+                "id": "event_origin",
+                "value": event_origin,
+                "isVisible":false,
+                "placeholder": "Enter a name for the event",
+            },
+            {
+                "type": "Input.Text",
+                "id": "event_owner",
+                "value": event_owner,
                 "isVisible":false,
                 "placeholder": "Enter a name for the event",
             },

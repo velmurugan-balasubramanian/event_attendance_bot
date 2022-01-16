@@ -1,4 +1,5 @@
 const router = require('express').Router()
+const {nanoid} = require('nanoid')
 const { renewSubscription } = require('../utils/subscription');
 const { sendMessage, sendCard, updateCard, updateRSVP } = require('../utils/cards')
 const platform = require('../utils/platform');
@@ -62,7 +63,7 @@ router.post('/callback', async (req, res) => {
 
             console.log('Conversation', conversation);
 
-            sendCard(createEvent(), conversation.id);
+            sendCard(createEvent(req.body.body.groupId, req.body.body.creatorId), conversation.id);
         }
         else if (req.body.body.text == "rsvp") {
             sendCard(rsvp(), req.body.body.groupId);
@@ -80,22 +81,42 @@ router.post('/callback', async (req, res) => {
 router.post('/interactive', async function (req, res) {
     console.log('Printing the message from the card');
 
-    console.log(req.body);
 
-    // let person = await platform.get(`/restapi/v1.0/glip/persons/${req.body.user.accountId}`).then(response => {
-    //     return response.json()
-    // })
-    // console.log("PERSON", person);
-    // //  let ticketDATA = await create_ticket(req.body.data.title, req.body.data.description, req.body.conversation.id, person.email)
-    // // // console.log('TICKET DDATA', ticketDATA);
-    // let result = await dbUtil.create(req.body.card.id, req.body.conversation.id, person.id, person.email, 'xxxxxxx', 'event-1')
 
-    // updateCard(req.body.conversation.id,
-    //     req.body.card.id,
-    //     editRsvp(req.body.data.name, req.body.data.company_name, req.body.data.rsvp, req.body.data.vaccination))
-    // sendMessage("Thanks for your interest :), your response has been recorded.", req.body.conversation.id)
-    res.statusCode = 200;
-    res.end('');
+    if (req.body.data.action === 'create_event') {
+
+        console.log(req.body);
+        // do create action event 
+
+        let members = await teamUtil.getTeam(req.body.data.event_origin);
+
+        console.log('MEMBERS', members.members);
+
+        let db = await dbUtil.createEvent(nanoid(),req.body.data,members.members)
+
+        console.log('DB', db);
+        res.statusCode = 200;
+        res.end('');
+    }
+
+    else {
+        let person = await platform.get(`/restapi/v1.0/glip/persons/${req.body.user.accountId}`).then(response => {
+            return response.json()
+        })
+        console.log("PERSON", person);
+        //  let ticketDATA = await create_ticket(req.body.data.title, req.body.data.description, req.body.conversation.id, person.email)
+        // // console.log('TICKET DDATA', ticketDATA);
+        let result = await dbUtil.create(req.body.card.id, req.body.conversation.id, person.id, person.email, 'xxxxxxx', 'event-1')
+
+        updateCard(req.body.conversation.id,
+            req.body.card.id,
+            editRsvp(req.body.data.name, req.body.data.company_name, req.body.data.rsvp, req.body.data.vaccination));
+
+        sendMessage("Thanks for your interest :), your response has been recorded.", req.body.conversation.id)
+
+        res.statusCode = 200;
+        res.end('');
+    }
 });
 
 

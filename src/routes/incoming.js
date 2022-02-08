@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {nanoid} = require('nanoid')
+const { nanoid } = require('nanoid')
 const { renewSubscription } = require('../utils/subscription');
 const { sendMessage, sendCard, updateCard, updateRSVP } = require('../utils/cards')
 const platform = require('../utils/platform');
@@ -10,7 +10,9 @@ const teamUtil = require('../utils/team')
 // Importing cards
 const rsvp = require('../cards/rsvp');
 const editRsvp = require('../cards/editRsvp');
-const createEvent = require('../cards/createEvent')
+const createEvent = require('../cards/createEvent');
+const updateEvent = require('../cards/updateEvent');
+const editRSVP = require('../cards/updateRSVP')
 
 
 router.get('/test', async (req, res) => {
@@ -79,7 +81,7 @@ router.post('/callback', async (req, res) => {
 
 // This handler is called when a user submit data from an adaptive card
 router.post('/interactive', async function (req, res) {
-    console.log('Printing the message from the card');
+    console.log('Printing the message from the card', req.body);
 
 
 
@@ -92,31 +94,68 @@ router.post('/interactive', async function (req, res) {
 
         console.log('MEMBERS', members.members);
 
-        let db = await dbUtil.createEvent(nanoid(),req.body.data,members.members)
+        let results = await dbUtil.createEvent(nanoid(), req.body.data, members.members)
+        let card = await dbUtil.createCard(req.body.card.id, req.body.user.accountId, req.body.conversation.id, results.rows[0])
 
-        console.log('DB', db);
-        res.statusCode = 200;
-        res.end('');
-    }
-
-    else {
-        let person = await platform.get(`/restapi/v1.0/glip/persons/${req.body.user.accountId}`).then(response => {
-            return response.json()
-        })
-        console.log("PERSON", person);
-        //  let ticketDATA = await create_ticket(req.body.data.title, req.body.data.description, req.body.conversation.id, person.email)
-        // // console.log('TICKET DDATA', ticketDATA);
-        let result = await dbUtil.create(req.body.card.id, req.body.conversation.id, person.id, person.email, 'xxxxxxx', 'event-1')
-
-        updateCard(req.body.conversation.id,
+        let updateEventCard = await updateCard(req.body.conversation.id,
             req.body.card.id,
-            editRsvp(req.body.data.name, req.body.data.company_name, req.body.data.rsvp, req.body.data.vaccination));
+            updateEvent(results.rows[0]));
 
-        sendMessage("Thanks for your interest :), your response has been recorded.", req.body.conversation.id)
+        let notifyUsers = await teamUtil.notifyAttendees(results.rows[0])
 
+        console.log('DB', results.rows[0]);
+        console.log('notifyUsers', notifyUsers);
         res.statusCode = 200;
         res.end('');
     }
+
+    if (req.body.data.action === 'edit_event') {
+        console.log('REQUEST BODY', req.body);
+        let results = await dbUtil.updateEvent(req.body.data);
+
+        let updateEventCard = await updateCard(req.body.conversation.id,
+            req.body.card.id,
+            updateEvent(results.rows[0]));
+
+        console.log('eventUpdate', results);
+        res.statusCode = 200;
+        res.end('');
+    }
+    if (req.body.data.action === 'invitation') {
+
+        let results = await dbUtil.updateRSVP(req.body.data, req.body.user.accountId);
+
+        let event = await dbUtil.getEvent(req.body.data.event_id);
+
+        console.log('req.body.data', req.body.data);
+        let updateInvitationCard = await updateCard(req.body.conversation.id,
+            req.body.card.id,
+            editRSVP(event.rows[0], req.body.data));
+
+        // console.log('Invitation update', results.rows[0]);
+        console.log(req.body);
+        res.statusCode = 200;
+        res.end('');
+
+    }
+    // else {
+    //     let person = await platform.get(`/restapi/v1.0/glip/persons/${req.body.user.accountId}`).then(response => {
+    //         return response.json()
+    //     })
+    //     console.log("PERSON", person);
+    //     //  let ticketDATA = await create_ticket(req.body.data.title, req.body.data.description, req.body.conversation.id, person.email)
+    //     // // console.log('TICKET DDATA', ticketDATA);
+    //     let result = await dbUtil.create(req.body.card.id, req.body.conversation.id, person.id, person.email, 'xxxxxxx', 'event-1')
+
+    //     updateCard(req.body.conversation.id,
+    //         req.body.card.id,
+    //         editRsvp(req.body.data.name, req.body.data.company_name, req.body.data.rsvp, req.body.data.vaccination));
+
+    //     sendMessage("Thanks for your interest :), your response has been recorded.", req.body.conversation.id)
+
+    //     res.statusCode = 200;
+    //     res.end('');
+    // }
 });
 
 

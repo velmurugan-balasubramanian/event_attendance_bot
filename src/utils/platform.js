@@ -1,6 +1,7 @@
 const rc = require('ringcentral');
 const fs = require('fs');
 
+const dbUtil = require('../utils/db')
 const REDIRECT_HOST = process.env.REDIRECT_HOST;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -15,11 +16,25 @@ rcsdk = new rc({
 });
 
 platform = rcsdk.platform();
-if (fs.existsSync(TOKEN_TEMP_FILE)) {
-    console.log('setting keys');
-    var data = JSON.parse(fs.readFileSync(TOKEN_TEMP_FILE));
-    console.log("Reusing access key from cache: " + data.access_token)
-    platform.auth().setData(data);
-}
+// if (fs.existsSync(TOKEN_TEMP_FILE)) {
+//     console.log('setting keys');
+//     var data = JSON.parse(fs.readFileSync(TOKEN_TEMP_FILE));
+//     console.log("Reusing access key from cache: " + data.access_token)
+//     platform.auth().setData(data);
+// }
+
+// const setToken = async () => {
+
+//     const token = await dbUtil.getToken
+//     console.log('+++token+++',token);
+//     return token;
+// }
+
+( async () => {
+    const token = await dbUtil.getToken()
+    // console.log('+++token+++', token.rows[0]);
+    console.log("Reusing access key from cache: " + token.rows[0].access_token)
+    platform.auth().setData(token.rows[0]);
+})();
 
 module.exports = platform;

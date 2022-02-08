@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const platform  = require('../utils/platform.js');
 const {subscribeToEvents} = require('../utils/subscription')
+const dbUtil = require('../utils/db')
 
 // const rc = require('ringcentral');
 const fs = require('fs')
@@ -55,7 +56,7 @@ router.get('/oauth', (req, res) => {
 /**
  * 
  */
-router.post('/oauth', (req, res) => {
+router.post('/oauth', async (req, res) => {
 
     let body = req.body
 
@@ -77,7 +78,8 @@ router.post('/oauth', (req, res) => {
         platform.auth().setData(data);
 
         console.log("Stashing access key: " + req.body.access_token)
-        fs.writeFileSync(TOKEN_TEMP_FILE, JSON.stringify(data))
+        await dbUtil.saveToken();
+        // fs.writeFileSync(TOKEN_TEMP_FILE, JSON.stringify(data))
 
         try {
             subscribeToEvents();

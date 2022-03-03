@@ -1,4 +1,7 @@
-const createEvent = (event_origin, event_owner ) => {
+const schedulerUtil = require('../utils/scheduler')
+const createEvent = async (event_origin, event_owner) => {
+
+    let timeZones = await schedulerUtil.getTimeZones()
 
     let card = {
         "type": "AdaptiveCard",
@@ -8,22 +11,22 @@ const createEvent = (event_origin, event_owner ) => {
             {
                 "type": "Input.Text",
                 "id": "action",
-                "value":"create_event",
-                "isVisible":false,
+                "value": "create_event",
+                "isVisible": false,
                 "placeholder": "Enter a name for the event",
             },
             {
                 "type": "Input.Text",
                 "id": "event_origin",
                 "value": event_origin,
-                "isVisible":false,
+                "isVisible": false,
                 "placeholder": "Enter a name for the event",
             },
             {
                 "type": "Input.Text",
                 "id": "event_owner",
                 "value": event_owner,
-                "isVisible":false,
+                "isVisible": false,
                 "placeholder": "Enter a name for the event",
             },
             {
@@ -55,24 +58,90 @@ const createEvent = (event_origin, event_owner ) => {
                 "placeholder": "Enter a date for the Event"
             },
             {
+                "type": "ColumnSet",
+                "columns": [
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": "Input Event Start Time",
+                                "wrap": true
+                            },
+                            {
+                                "type": "Input.Time",
+                                "id": "event_start_time",
+                                "placeholder": "Enter event start time"
+                            },
+                        ],
+                        "width": "auto"
+                    },
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": "Input Event End Time",
+                                "wrap": true
+                            },
+                            {
+                                "type": "Input.Time",
+                                "id": "event_end_time",
+                                "placeholder": "Enter event end time"
+                            },
+                        ],
+                        "width": "stretch"
+                    }
+                ]
+            },
+            {
                 "type": "TextBlock",
-                "text": "Input Event Start Time",
+                "text": "Enter the timeZone of the meeting",
                 "wrap": true
             },
             {
-                "type": "Input.Time",
-                "id": "event_start_time",
-                "placeholder": "Enter event start time"
+                "type": "Input.ChoiceSet",
+                "id": "timezone",
+                "choices": timeZones
             },
             {
                 "type": "TextBlock",
-                "text": "Input Event End Time",
+                "text": "Remind Users before",
                 "wrap": true
             },
             {
-                "type": "Input.Time",
-                "id": "event_end_time",
-                "placeholder": "Enter event end time"
+                "type": "Input.ChoiceSet",
+                "id": "remindBefore",
+                "choices": [
+                    {
+                        "title": "15 Minutes",
+                        "value": "15"
+                    },
+                    {
+                        "title": "30 Minutes",
+                        "value": "30"
+                    },
+                    {
+                        "title": "45 Minutes",
+                        "value": "45"
+                    },
+                    {
+                        "title": "1 Hour",
+                        "value": "60"
+                    },
+                    {
+                        "title": "2 Hours",
+                        "value": "120"
+                    },
+                    {
+                        "title": "4 Hours",
+                        "value": "240"
+                    },
+                    {
+                        "title": "1 Day",
+                        "value": "1440"
+                    }
+                ]
             },
             {
                 "type": "Input.Toggle",

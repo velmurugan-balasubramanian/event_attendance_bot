@@ -1,4 +1,6 @@
 .env
 node_modules
 .bot-auth
+.bot-aut
 .bot-auth1
+sample

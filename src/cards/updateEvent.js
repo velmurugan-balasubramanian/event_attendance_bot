@@ -1,4 +1,9 @@
-const updateEvent = (event) => {
+const schedulerUtil = require('../utils/scheduler')
+
+const updateEvent = async (event) => {
+
+    let timeZones = await schedulerUtil.getTimeZones()
+
 
     let card = {
         "type": "AdaptiveCard",
@@ -21,7 +26,7 @@ const updateEvent = (event) => {
                 "type": "TextBlock",
                 "size": "Medium",
                 "weight": "Bolder",
-                "text": `You have successfully scheduled the event, ${event.event_name} on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time.substring(0,5)} and ${event.event_end_time.substring(0,5)}`,
+                "text": `You have successfully scheduled the event, ${event.event_name} on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time.substring(0, 5)} and ${event.event_end_time.substring(0, 5)}`,
                 "wrap": true
             },
         ],
@@ -77,26 +82,92 @@ const updateEvent = (event) => {
                             "value": event.event_date
                         },
                         {
+                            "type": "ColumnSet",
+                            "columns": [
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "Input Event Start Time",
+                                            "wrap": true
+                                        },
+                                        {
+                                            "type": "Input.Time",
+                                            "id": "event_start_time",
+                                            "placeholder": "Enter event start time",
+                                            "value": `${event.event_start_time.substring(0,5)}`
+                                        },
+                                    ],
+                                    "width": "auto"
+                                },
+                                {
+                                    "type": "Column",
+                                    "items": [
+                                        {
+                                            "type": "TextBlock",
+                                            "text": "Input Event End Time",
+                                            "wrap": true
+                                        },
+                                        {
+                                            "type": "Input.Time",
+                                            "id": "event_end_time",
+                                            "placeholder": "Enter event end time",
+                                            "value": `${event.event_end_time.substring(0,5)}`
+                                        },
+                                    ],
+                                    "width": "stretch"
+                                }
+                            ]
+                        },
+                        {
                             "type": "TextBlock",
-                            "text": "Input Event Start Time",
+                            "text": "Enter the timeZone of the meeting",
                             "wrap": true
                         },
                         {
-                            "type": "Input.Time",
-                            "id": "event_start_time",
-                            "placeholder": "Enter event start time",
-                            "value": `${event.event_start_time.substring(0,5)}`
+                            "type": "Input.ChoiceSet",
+                            "id": "timezone",
+                            "choices": timeZones
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Input Event End Time",
+                            "text": "Remind Users before",
                             "wrap": true
                         },
                         {
-                            "type": "Input.Time",
-                            "id": "event_end_time",
-                            "placeholder": "Enter event end time",
-                            "value": `${event.event_end_time.substring(0,5)}`
+                            "type": "Input.ChoiceSet",
+                            "id": "remindBefore",
+                            "choices": [
+                                {
+                                    "title": "15 Minutes",
+                                    "value": "15"
+                                },
+                                {
+                                    "title": "30 Minutes",
+                                    "value": "30"
+                                },
+                                {
+                                    "title": "45 Minutes",
+                                    "value": "45"
+                                },
+                                {
+                                    "title": "1 Hour",
+                                    "value": "60"
+                                },
+                                {
+                                    "title": "2 Hours",
+                                    "value": "120"
+                                },
+                                {
+                                    "title": "4 Hours",
+                                    "value": "240"
+                                },
+                                {
+                                    "title": "1 Day",
+                                    "value": "1440"
+                                }
+                            ]
                         },
                         {
                             "type": "Input.Toggle",

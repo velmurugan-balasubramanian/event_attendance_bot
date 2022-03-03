@@ -32,6 +32,8 @@ const TOKEN_TEMP_FILE = '.bot-auth';
  */
 router.get('/oauth', (req, res) => {
 
+    console.log("Oauth GET", req);
+
     if (!req.query.code) {
         res.status(500).send({ "Error": "No authorization token received." }).end();
         console.log("RingCentral did not transmit an authorizaton token.");
@@ -58,10 +60,10 @@ router.get('/oauth', (req, res) => {
  */
 router.post('/oauth', async (req, res) => {
 
-    let body = req.body
+    console.log("Oauth POst", req.body);
 
-    console.log('status',platform.loggedIn());
-    console.log("body " + req.body)
+    let body = req.body
+    
     console.log("Stashing access key: " + req.body.access_token)
     if (req.body.access_token) {
         console.log("Verifying redirect URL for bot server.")
@@ -78,7 +80,7 @@ router.post('/oauth', async (req, res) => {
         platform.auth().setData(data);
 
         console.log("Stashing access key: " + req.body.access_token)
-        await dbUtil.saveToken();
+        await dbUtil.saveToken(data);
         // fs.writeFileSync(TOKEN_TEMP_FILE, JSON.stringify(data))
 
         try {

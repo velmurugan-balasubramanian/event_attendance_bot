@@ -185,6 +185,35 @@ const getToken = async () => {
 
 }
 
+
+const getEvents = async (event_owner) => {
+    try {
+        const dbQuery = "select * from events where event_owner = $1"
+        const dbValubes = [event_owner];
+        const dbResults = await db.query(dbQuery, dbValubes)
+
+        // console.log('dbResults', dbResults.rows);
+        return dbResults
+    } catch (error) {
+        console.error('Unable to get Events list');
+        console.error(error);
+    }
+}
+
+const getRSVPDetails = async (eventId) => {
+    try {
+        const dbQuery = "select attendees, attending, not_attending from events where event_id = $1"
+        const dbValubes = [eventId];
+        const dbResults = await db.query(dbQuery, dbValubes)
+
+        return dbResults
+
+    } catch (error) {
+        console.error('Unable to get event Id');
+        console.error(error);
+    }
+}
+
 module.exports = {
     create: create,
     createTeam: createTeam,
@@ -195,7 +224,9 @@ module.exports = {
     updateEvent: updateEvent,
     updateRSVP: updateRSVP,
     saveToken: saveToken,
-    getToken: getToken
+    getToken: getToken,
+    getEvents:getEvents,
+    getRSVPDetails:getRSVPDetails
 }
 
 

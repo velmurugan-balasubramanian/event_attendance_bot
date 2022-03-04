@@ -11,6 +11,7 @@ const schedularUtil = require('../utils/scheduler')
 // Import cards
 const createEvent = require('../cards/createEvent');
 const updateEvent = require('../cards/updateEvent');
+const getDetails = require('../cards/getDetails');
 const editRSVP = require('../cards/updateRSVP');
 
 
@@ -71,10 +72,29 @@ router.post('/callback', async (req, res) => {
                 await sendCard(await createEvent(req.body.body.groupId, req.body.body.creatorId), conversation.id);
             }
             else if (req.body.body.text === "jarvis help") {
-                sendMessage("Hey, using me you can create and schedule events including sports events, Lunch, dinner or coffee events and concerts ", req.body.body.groupId)
+                await sendMessage("Hey, using me you can create and schedule events including sports events, Lunch, dinner or coffee events and concerts ", req.body.body.groupId)
+            }
+            else if (req.body.body.text === 'jarvis get details') {
+                console.log('req.body.body.text', req.body.body);
+                // await sendMessage("I can get you details ", req.body.body.groupId)
+                // await sendCard(await createEvent(req.body.body.groupId, req.body.body.creatorId), conversation.id);
+                let results = await dbUtil.getEvents(req.body.body.creatorId)
+
+                // const events = (({ event_id, event_name }) => ({ event_id , event_name }))(results.rows);
+
+                let events = results.rows.map((event) => {
+                    const value = event['event_id'] || 'sample'
+                    const title = event['event_name'] || 'Sample'
+                    return { title, value }
+                });
+                let getDetailsCard = await getDetails(events);
+                await sendCard(getDetailsCard, req.body.body.groupId);
+                // await sendCard(await createEvent(req.body.body.groupId, req.body.body.creatorId), req.body.body.groupId);
+
+                // console.log('List events', events);
             }
             else {
-                sendMessage("I do not understand '" +
+                await sendMessage("I do not understand '" +
                     req.body.body.text +
                     "'", req.body.body.groupId)
             }
@@ -82,6 +102,7 @@ router.post('/callback', async (req, res) => {
             res.json({ 'message': 'ok' }).status(200)
         }
     } catch (error) {
+        console.log(error);
         res.json({ 'success': false }).status(500)
     }
 })
@@ -92,29 +113,29 @@ router.post('/callback', async (req, res) => {
 // This handler is called when a user submit data from an adaptive card
 router.post('/interactive', async function (req, res) {
 
+    console.log('Request bosy', req.body);
+
     try {
 
         if (req.body.data.action === 'create_event') {
 
-            console.log(req.body);
-            // do create action event 
-
+            // Get list of members from the team from which the create event was triggered
             let members = await teamUtil.getTeam(req.body.data.event_origin);
 
-            console.log('MEMBERS', members.members);
-
+            // Add event entry to the event table in the DB
             let results = await dbUtil.createEvent(nanoid(), req.body.data, members.members)
-            let card = await dbUtil.createCard(req.body.card.id, req.body.user.accountId, req.body.conversation.id, results.rows[0])
 
-            let updateEventCard = await updateCard(req.body.conversation.id,
-                req.body.card.id,
-                await updateEvent(results.rows[0]));
+            // Add card entry to the Cards table in the DB
+            await dbUtil.createCard(req.body.card.id, req.body.user.accountId, req.body.conversation.id, results.rows[0])
 
-            let notifyUsers = await teamUtil.notifyAttendees(results.rows[0])
+            // Update the existing card with the details
+            await updateCard(req.body.conversation.id, req.body.card.id, await updateEvent(results.rows[0]));
 
-            let scheduleReminder = await schedularUtil.createReminder(req.body.data)
-            console.log('DB', results.rows[0]);
-            console.log('notifyUsers', notifyUsers);
+            // Send the invite cards to all the members to the team
+            await teamUtil.notifyAttendees(results.rows[0])
+
+            // Create a reminder to notify users later based on preference
+            await schedularUtil.createReminder(req.body.data)
             res.json({ 'success': true }).status(200)
         }
 
@@ -142,6 +163,16 @@ router.post('/interactive', async function (req, res) {
 
             // console.log('Invitation update', results.rows[0]);
             console.log(req.body);
+            res.json({ 'success': true }).status(200)
+
+        }
+
+        if (req.body.data.action === 'get_details') {
+            let eventId = req.body.data.event
+
+            let result = await dbUtil.getRSVPDetails(eventId);
+            await teamUtil.getAllAttendees(req.body.data.get_rsvp, result.rows[0])
+            // console.log('RESULT', result.rows);
             res.json({ 'success': true }).status(200)
 
         }

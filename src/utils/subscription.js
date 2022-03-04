@@ -4,7 +4,7 @@ const REDIRECT_HOST = process.env.REDIRECT_HOST;
 
 
 const subscribeToEvents = (token) => {
-    console.log("Subscribing to post and group events")
+    console.info("Subscribing to post and group events")
     var requestData = {
         "eventFilters": [
             "/restapi/v1.0/glip/posts",

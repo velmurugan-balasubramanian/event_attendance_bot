@@ -1,7 +1,5 @@
 const platform = require('./platform');
 const { sendCard, sendMessage } = require('./cards');
-
-const rsvp = require('../cards/rsvp');
 const sendInvitation = require('../cards/sendInvitation')
 
 
@@ -20,8 +18,6 @@ const getTeam = async (teamId) => {
 
 const getPerson = async (accountId) => {
 
-    console.log('Account ID', accountId);
-
     try {
         let response = await platform.get(`/restapi/v1.0/glip/persons/${accountId}`)
         let person = response.json();
@@ -35,12 +31,15 @@ const getPerson = async (accountId) => {
 
 const createConversation = async (members) => {
     try {
+
         let response = await platform.post(`/restapi/v1.0/glip/conversations`, members)
         return response.json()
+
     } catch (error) {
 
         console.error(`Unable to create a conversation`);
         console.error(error);
+
     }
 
 }
@@ -73,11 +72,40 @@ const notifyAttendees = async (event) => {
     }
 }
 
+
+const getAllAttendees = async (rsvp, status) => {
+
+    try {
+
+        let list;
+        if (rsvp === 'yes' && status.attending.length > 0) list = status.attending
+        if (rsvp === 'no' && status.not_attending.length > 0) list = status.not_attending
+        if (rsvp === 'all' && status.attendees.length > 0) list = status.attendees
+
+        console.log('List', list);
+
+        list.forEach(async (personID, idx) => {
+            let person = await getPerson(personID);
+            if (person) {
+                console.log('Person', person);
+            }
+
+        })
+
+    } catch (error) {
+        console.error('Unable to get all attendees');
+        console.error(error);
+    }
+
+}
+
+
+
 // const getTimeZones = async () => {
 //     try {
 //         let response = await platform.get('')
 //     } catch (error) {
-        
+
 //     }
 // }
 
@@ -86,5 +114,6 @@ module.exports = {
     getTeam: getTeam,
     getPerson: getPerson,
     createConversation: createConversation,
-    notifyAttendees: notifyAttendees
+    notifyAttendees: notifyAttendees,
+    getAllAttendees: getAllAttendees
 }

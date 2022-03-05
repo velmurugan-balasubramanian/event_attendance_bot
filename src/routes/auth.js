@@ -32,7 +32,7 @@ const REDIRECT_HOST = process.env.REDIRECT_HOST;
  */
 router.get('/oauth', async (req, res) => {
 
-    console.log("Oauth GET", req);
+    // console.log("Oauth GET", req);
 
     if (!req.query.code) {
         res.status(500).send({ "Error": "No authorization token received." }).end();
@@ -61,10 +61,10 @@ router.get('/oauth', async (req, res) => {
             // }
 
             // accountTokens.push(accountTokenObj)
+            subscribeToEvents()
             await dbUtil.saveToken(tokens);
             res.status(200).send("")
             console.log("Subscribe to Webhooks notification")
-            subscribeToEvents()
 
         } catch (error) {
             res.status(200).send("").end();

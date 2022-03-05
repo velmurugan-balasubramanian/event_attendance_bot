@@ -51,14 +51,17 @@ router.get('/oauth', async (req, res) => {
             var jsonObj = await resp1.json()
             tokens['refresh_token'] = 'xxx';
             tokens['refresh_token_expires_in'] = 10000000000;
-            var accountTokenObj = {
-                ownerId: tokens.owner_id, // Bot extension id
-                accountId: jsonObj.account.id, // User account id
-                tokens: tokens,
-                subscriptionId: ''
-            }
+            tokens['token_type'] = "bearer"
 
-            accountTokens.push(accountTokenObj)
+            // var accountTokenObj = {
+            //     ownerId: tokens.owner_id, // Bot extension id
+            //     accountId: jsonObj.account.id, // User account id
+            //     tokens: tokens,
+            //     subscriptionId: ''
+            // }
+
+            // accountTokens.push(accountTokenObj)
+            await dbUtil.saveToken(tokens);
             res.status(200).send("")
             console.log("Subscribe to Webhooks notification")
             subscribeToEvents()

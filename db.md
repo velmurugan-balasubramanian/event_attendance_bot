@@ -14,7 +14,7 @@ drop table events
 
 create table cards(card_id varchar(1000) primary key, team_id varchar(1000), event_id varchar(1000), receiver_user_id varchar(1000), conversation_id varchar(1000))
 
-create table tokens(token_type varchar(100), access_token varchar(1000), expires_in varchar(100), refresh_token varchar(1000), refresh_token_expires_in varchar(100), expire_time varchar(100), refresh_token_expire_time varchar(100))
+create table tokens(token_type varchar(100), access_token varchar(1000), expires_in varchar(100), refresh_token varchar(1000), refresh_token_expires_in varchar(100))
 
 update events SET attendees = '{"307480004","707849006"}' where event_id = 'X45MfLyZMblyvhx9cwDDB'
 

@@ -33,8 +33,11 @@ platform = rcsdk.platform();
 ( async () => {
     const token = await dbUtil.getToken()
     // console.log('+++token+++', token.rows[0]);
-    console.log("Reusing access key from cache: " + token.rows[0].access_token)
-    platform.auth().setData(token.rows[0]);
+    if (token) {
+        console.log("Reusing access key from cache: " + token.rows[0].access_token)
+        platform.auth().setData(token.rows[0]);
+    }
+
 })();
 
 module.exports = platform;

@@ -1,6 +1,6 @@
 const router = require('express').Router()
-const platform  = require('../utils/platform.js');
-const {subscribeToEvents} = require('../utils/subscription')
+const platform = require('../utils/platform.js');
+const { subscribeToEvents } = require('../utils/subscription')
 const dbUtil = require('../utils/db')
 
 // const rc = require('ringcentral');
@@ -30,7 +30,7 @@ const REDIRECT_HOST = process.env.REDIRECT_HOST;
 /**
  * Authorize
  */
-router.get('/oauth', (req, res) => {
+router.get('/oauth', async (req, res) => {
 
     console.log("Oauth GET", req);
 
@@ -39,19 +39,45 @@ router.get('/oauth', (req, res) => {
         console.log("RingCentral did not transmit an authorizaton token.");
     } else {
         var creatorId = req.query.creator_extension_id;
-        platform.login({
-            code: req.query.code,
-            redirectUri: REDIRECT_HOST + '/auth/oauth'
-        }).then(function (authResponse) {
-            console.log('Authenticated');
+        try {
+            var params = {
+                code: req.query.code,
+                redirectUri: RINGCENTRAL_OAUTH_REDIRECT_URI
+            }
+            var resp = await platform.login(params)
+            // Get bot access token. The tokens is per user's account
+            var tokens = await resp.json()
+            var resp1 = await platform.get('/restapi/v1.0/account/~/extension/~')
+            var jsonObj = await resp1.json()
+            tokens['refresh_token'] = 'xxx';
+            tokens['refresh_token_expires_in'] = 10000000000;
+            var accountTokenObj = {
+                ownerId: tokens.owner_id, // Bot extension id
+                accountId: jsonObj.account.id, // User account id
+                tokens: tokens,
+                subscriptionId: ''
+            }
+
+            accountTokens.push(accountTokenObj)
+            res.status(200).send("")
+            console.log("Subscribe to Webhooks notification")
             subscribeToEvents()
-            console.log('authResponse',authResponse);
-        }).catch(function (e) {
-            console.error(e)
-            res.status(500).send("Error installing bot and subscribing to events: ", e).end()
-        })
+
+        } catch (error) {
+            res.status(200).send("").end();
+        }
+        // platform.login({
+        //     code: req.query.code,
+        //     redirectUri: REDIRECT_HOST + '/auth/oauth'
+        // }).then(function (authResponse) {
+        //     console.log('Authenticated');
+        //     subscribeToEvents()
+        //     console.log('authResponse', authResponse);
+        // }).catch(function (e) {
+        //     console.error(e)
+        //     res.status(500).send("Error installing bot and subscribing to events: ", e).end()
+        // })
     }
-    res.status(200).send("").end();
 })
 
 
@@ -63,7 +89,7 @@ router.post('/oauth', async (req, res) => {
     console.log("Oauth POst", req.body);
 
     let body = req.body
-    
+
     console.log("Stashing access key: " + req.body.access_token)
     if (req.body.access_token) {
         console.log("Verifying redirect URL for bot server.")

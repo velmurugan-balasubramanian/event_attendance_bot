@@ -27,12 +27,12 @@ router.post('/callback', async (req, res) => {
         if (validationToken) {
             console.log('Verifying webhook.');
             res.setHeader('Validation-Token', validationToken);
-            res.json({ 'message': 'ok' }).status(200)
+            res.json({ 'success': true }).status(200)
         }
         if (req.body.event == "/restapi/v1.0/subscription/~?threshold=60&interval=15") {
             console.log("Renewing subscription ID: " + req.body.subscriptionId);
             renewSubscription(req.body.subscriptionId);
-            res.json({ 'message': 'ok' }).status(200)
+            res.json({ 'success': true }).status(200)
         }
         if (req.body.body.eventType == "GroupJoined") {
 
@@ -41,7 +41,7 @@ router.post('/callback', async (req, res) => {
 
             // Create a DB entry with team details in the team table
             let dbResult = await dbUtil.createTeam(teamDetails)
-            res.json({ 'message': 'ok' }).status(200)
+            res.json({ 'success': true }).status(200)
         }
 
         if (req.body.body.eventType == "PostAdded") {
@@ -99,7 +99,7 @@ router.post('/callback', async (req, res) => {
                     "'", req.body.body.groupId)
             }
 
-            res.json({ 'message': 'ok' }).status(200)
+            res.json({ 'message': true }).status(200)
         }
     } catch (error) {
         console.log(error);

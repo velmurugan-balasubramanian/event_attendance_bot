@@ -42,7 +42,7 @@ router.get('/oauth', async (req, res) => {
         try {
             var params = {
                 code: req.query.code,
-                redirectUri: RINGCENTRAL_OAUTH_REDIRECT_URI
+                redirectUri: REDIRECT_HOST + '/auth/oauth'
             }
             var resp = await platform.login(params)
             // Get bot access token. The tokens is per user's account

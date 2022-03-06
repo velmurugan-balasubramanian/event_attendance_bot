@@ -162,7 +162,8 @@ const saveToken = async (tokenData) => {
         const dbResults = await db.query(dbQuery, dbValues);
         console.log('dbResults', dbResults);
     } catch (error) {
-        
+        console.log('error saving token');
+        console.log(error);
     }
 
 

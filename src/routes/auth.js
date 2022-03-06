@@ -61,8 +61,8 @@ router.get('/oauth', async (req, res) => {
             // }
 
             // accountTokens.push(accountTokenObj)
-            subscribeToEvents()
             await dbUtil.saveToken(tokens);
+            subscribeToEvents()
             res.status(200).send("")
             console.log("Subscribe to Webhooks notification")
 

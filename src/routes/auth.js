@@ -44,6 +44,7 @@ router.get('/oauth', async (req, res) => {
                 code: req.query.code,
                 redirectUri: REDIRECT_HOST + '/auth/oauth'
             }
+            console.log('Params', params);
             var resp = await platform.login(params)
             // Get bot access token. The tokens is per user's account
             var tokens = await resp.json()
@@ -67,7 +68,9 @@ router.get('/oauth', async (req, res) => {
             console.log("Subscribe to Webhooks notification")
 
         } catch (error) {
-            res.status(200).send("").end();
+            console.log("Error while installing the bot");
+            console.error(error);
+            res.status(500).send("").end();
         }
         // platform.login({
         //     code: req.query.code,

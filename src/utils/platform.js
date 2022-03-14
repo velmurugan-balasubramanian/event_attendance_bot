@@ -9,13 +9,14 @@ const RINGCENTRAL_ENV = process.env.RINGCENTRAL_ENV;
 const TOKEN_TEMP_FILE = '.bot-auth';
 
 
+
 rcsdk = new rc({
     server: RINGCENTRAL_ENV,
     appKey: CLIENT_ID,
     appSecret: CLIENT_SECRET
 });
 
-platform = rcsdk.platform();
+platform =  rcsdk.platform();
 // if (fs.existsSync(TOKEN_TEMP_FILE)) {
 //     console.log('setting keys');
 //     var data = JSON.parse(fs.readFileSync(TOKEN_TEMP_FILE));
@@ -30,22 +31,22 @@ platform = rcsdk.platform();
 //     return token;
 // }
 
-( async () => {
-    try {
+// ( async () => {
+//     try {
 
-        const token = await dbUtil.getToken()
-        console.log('tokens');
-        // console.log('+++token+++', token.rows[0]);
-        if (token !== undefined) {
-            console.log("Reusing access key from cache: " + token.rows[0].access_token)
-            platform.auth().setData(token.rows[0]);
-        }
+//         const token = await dbUtil.getToken()
+//         console.log('tokens');
+//         // console.log('+++token+++', token.rows[0]);
+//         if (token !== undefined) {
+//             console.log("Reusing access key from cache: " + token.rows[0].access_token)
+//             platform.auth().setData(token.rows[0]);
+//         }
         
-    } catch (error) {
-        console.log(error);
-    }
+//     } catch (error) {
+//         console.log(error);
+//     }
 
 
-})();
+// })();
 
 module.exports = platform;

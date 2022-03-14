@@ -68,6 +68,7 @@ const updateEvent = async (event) => {
                             "id": "event_name",
                             "placeholder": "Enter a name for the event",
                             "maxLength": 500,
+                            "isRequired": true,
                             "value": event.event_name
                         },
                         {
@@ -79,6 +80,7 @@ const updateEvent = async (event) => {
                             "type": "Input.Date",
                             "id": "event_date",
                             "placeholder": "Enter a date for the Event",
+                            "isRequired": true,
                             "value": event.event_date
                         },
                         {
@@ -96,6 +98,7 @@ const updateEvent = async (event) => {
                                             "type": "Input.Time",
                                             "id": "event_start_time",
                                             "placeholder": "Enter event start time",
+                                            "isRequired": true,
                                             "value": `${event.event_start_time.substring(0,5)}`
                                         },
                                     ],
@@ -113,6 +116,7 @@ const updateEvent = async (event) => {
                                             "type": "Input.Time",
                                             "id": "event_end_time",
                                             "placeholder": "Enter event end time",
+                                            "isRequired": true,
                                             "value": `${event.event_end_time.substring(0,5)}`
                                         },
                                     ],
@@ -128,6 +132,7 @@ const updateEvent = async (event) => {
                         {
                             "type": "Input.ChoiceSet",
                             "id": "timezone",
+                            "isRequired": true,
                             "choices": timeZones
                         },
                         {
@@ -138,6 +143,7 @@ const updateEvent = async (event) => {
                         {
                             "type": "Input.ChoiceSet",
                             "id": "remindBefore",
+                            "isRequired": true,
                             "choices": [
                                 {
                                     "title": "15 Minutes",

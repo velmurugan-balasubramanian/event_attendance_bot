@@ -4,9 +4,10 @@ const sendInvitation = require('../cards/sendInvitation')
 
 
 
-const getTeam = async (teamId) => {
-    console.log('TEAM ID', teamId);
+const getTeam = async (token, teamId) => {
+
     try {
+        await platform.auth().setData(token);
         let response = await platform.get(`/restapi/v1.0/glip/groups/${teamId}`)
         return response.json();
     } catch (error) {
@@ -16,9 +17,11 @@ const getTeam = async (teamId) => {
 
 }
 
-const getPerson = async (accountId) => {
+const getPerson = async (token, accountId) => {
 
     try {
+
+        await platform.auth().setData(token);
         let response = await platform.get(`/restapi/v1.0/glip/persons/${accountId}`)
         let person = response.json();
         return person
@@ -29,9 +32,9 @@ const getPerson = async (accountId) => {
 
 }
 
-const createConversation = async (members) => {
+const createConversation = async (token, members) => {
     try {
-
+        await platform.auth().setData(token);
         let response = await platform.post(`/restapi/v1.0/glip/conversations`, members)
         return response.json()
 
@@ -45,11 +48,14 @@ const createConversation = async (members) => {
 }
 
 // change function name to send RSVP cards 
-const notifyAttendees = async (event) => {
+const notifyAttendees = async (token, event) => {
+
+    console.log("Token", event);
 
     try {
+        console.log('event.attendees', event.attendees);
         event.attendees.forEach(async (member) => {
-            let conversation = await createConversation(
+            let conversation = await createConversation(token,
                 {
                     members: [
                         {
@@ -63,8 +69,8 @@ const notifyAttendees = async (event) => {
             )
 
             // await sendCard(rsvp(event.event_id), conversation.id)
-            await sendCard(sendInvitation(event), conversation.id)
-            await sendMessage("BUlk message", conversation.id);
+            await sendCard(token, sendInvitation(event), conversation.id)
+            // await sendMessage(token, "BUlk message", conversation.id);
         });
         return true
     } catch (error) {
@@ -73,7 +79,7 @@ const notifyAttendees = async (event) => {
 }
 
 
-const getAllAttendees = async (rsvp, status) => {
+const getAllAttendees = async (token, rsvp, status) => {
 
     try {
 
@@ -85,7 +91,7 @@ const getAllAttendees = async (rsvp, status) => {
         console.log('List', list);
 
         list.forEach(async (personID, idx) => {
-            let person = await getPerson(personID);
+            let person = await getPerson(token, personID);
             if (person) {
                 console.log('Person', person);
             }

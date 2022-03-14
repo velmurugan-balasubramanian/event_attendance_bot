@@ -3,23 +3,24 @@ const platform = require('./platform');
 
 
 
-const sendMessage = async (msg, group) => {
+const sendMessage = async (token, msg, group) => {
 
     try {
+        await platform.auth().setData(token);
         await platform.post('/restapi/v1.0/glip/chats/' + group + '/posts', {
             "text": msg
         })
 
     } catch (error) {
         console.log('Unable to Send message to the group');
-        console.log(e)
+        console.log(error)
     }
 }
 
-const sendCard = async (card, group) => {
-    console.log("CARD", JSON.stringify(card.body));
+const sendCard = async (token, card, group) => {
     try {
         console.log("Posting card to group: " + group);
+        await platform.auth().setData(token);
         let data = await platform.post('/restapi/v1.0/glip/chats/' + group + '/adaptive-cards', card);
         return data
     } catch (error) {
@@ -30,8 +31,10 @@ const sendCard = async (card, group) => {
 
 }
 
-const updateCard = (group, card, content) => {
+const updateCard = async (token, group, card, content) => {
+    
     console.log("Updating card...");
+    platform.auth().setData(token);
     platform.put('/restapi/v1.0/glip/adaptive-cards/' + card, content)
         .catch(function (e) {
             console.log(e)

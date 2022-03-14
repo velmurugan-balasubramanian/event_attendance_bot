@@ -1,7 +1,21 @@
 const schedulerUtil = require('../utils/scheduler')
-const createEvent = async (event_origin, event_owner) => {
+const createEvent = async (event_origin, event_owner, text) => {
 
     let timeZones = await schedulerUtil.getTimeZones()
+
+    let eventType = ''
+
+    let eventImages = {
+        'sports': 'https://img.icons8.com/stickers/452/sport.png',
+        'concert': 'https://img.icons8.com/stickers/344/rock-music.png',
+        'dinner': 'https://img.icons8.com/stickers/344/food-and-wine.png',
+        'lunch': 'https://img.icons8.com/stickers/344/pizza.png'
+    }
+
+    if ((text.indexOf('sports') || text.indexOf('Sports') || text.indexOf('game')) > 1) eventType = 'sports'
+    if (text.indexOf('concert') > 1) eventType = 'concert'
+    if ((text.indexOf('dinner') || text.indexOf('Dinner')) > 1) eventType = 'dinner'
+    if ((text.indexOf('Lunch') || text.indexOf('lunch')) > 1) eventType = 'lunch'
 
     let card = {
         "type": "AdaptiveCard",
@@ -13,7 +27,12 @@ const createEvent = async (event_origin, event_owner) => {
                 "id": "action",
                 "value": "create_event",
                 "isVisible": false,
-                "placeholder": "Enter a name for the event",
+            },
+            {
+                "type": "Input.Text",
+                "id": "event_type",
+                "value": eventType,
+                "isVisible": false,
             },
             {
                 "type": "Input.Text",
@@ -30,11 +49,35 @@ const createEvent = async (event_origin, event_owner) => {
                 "placeholder": "Enter a name for the event",
             },
             {
-                "type": "TextBlock",
-                "size": "Medium",
-                "weight": "Bolder",
-                "text": "Create an Event",
-                "wrap": true
+                "type": "ColumnSet",
+                "columns": [
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "Image",
+                                "url": eventImages[eventType],
+                                "size": "small",
+                                "style": "person"
+                            }
+                        ],
+                        "width": "auto"
+                    },
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "size": "large",
+                                "color": "dark",
+                                "weight": "Bolder",
+                                "text": `Create a ${eventType} Event`,
+                                "wrap": true
+                            }
+                        ],
+                        "width": "auto"
+                    }
+                ]
             },
             {
                 "type": "TextBlock",
@@ -44,6 +87,7 @@ const createEvent = async (event_origin, event_owner) => {
             {
                 "type": "Input.Text",
                 "id": "event_name",
+                "isRequired": true,
                 "placeholder": "Enter a name for the event",
                 "maxLength": 500
             },
@@ -55,6 +99,7 @@ const createEvent = async (event_origin, event_owner) => {
             {
                 "type": "Input.Date",
                 "id": "event_date",
+                "isRequired": true,
                 "placeholder": "Enter a date for the Event"
             },
             {
@@ -71,6 +116,7 @@ const createEvent = async (event_origin, event_owner) => {
                             {
                                 "type": "Input.Time",
                                 "id": "event_start_time",
+                                "isRequired": true,
                                 "placeholder": "Enter event start time"
                             },
                         ],
@@ -87,6 +133,7 @@ const createEvent = async (event_origin, event_owner) => {
                             {
                                 "type": "Input.Time",
                                 "id": "event_end_time",
+                                "isRequired": true,
                                 "placeholder": "Enter event end time"
                             },
                         ],
@@ -102,6 +149,7 @@ const createEvent = async (event_origin, event_owner) => {
             {
                 "type": "Input.ChoiceSet",
                 "id": "timezone",
+                "isRequired": true,
                 "choices": timeZones
             },
             {
@@ -112,6 +160,8 @@ const createEvent = async (event_origin, event_owner) => {
             {
                 "type": "Input.ChoiceSet",
                 "id": "remindBefore",
+                "isRequired": true,
+                "value": "60",
                 "choices": [
                     {
                         "title": "15 Minutes",

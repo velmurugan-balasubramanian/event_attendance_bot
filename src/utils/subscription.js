@@ -3,29 +3,34 @@ const platform = require('./platform')
 const REDIRECT_HOST = process.env.REDIRECT_HOST;
 
 
-const subscribeToEvents = (token) => {
-    console.info("Subscribing to post and group events")
-    var requestData = {
-        "eventFilters": [
-            "/restapi/v1.0/glip/posts",
-            "/restapi/v1.0/glip/groups",
-            "/restapi/v1.0/subscription/~?threshold=60&interval=15",
-            "/restapi/v1.0/glip/teams"
-        ],
-        "deliveryMode": {
-            "transportType": "WebHook",
-            "address": REDIRECT_HOST + "/incoming/callback"
-        },
-        "expiresIn": 604799
-    };
-    platform.post('/subscription', requestData)
-        .then(function (subscriptionResponse) {
-            console.log('Subscription Response: ', subscriptionResponse.json());
-            subscriptionId = subscriptionResponse.id;
-        }).catch(function (e) {
-            console.error('There was a problem subscribing to events. ', e);
-            throw e;
-        });
+const subscribeToEvents = async (token) => {
+
+    try {
+        console.info("Subscribing to post and group events")
+        var requestData = {
+            "eventFilters": [
+                "/restapi/v1.0/glip/posts",
+                "/restapi/v1.0/glip/groups",
+                "/restapi/v1.0/subscription/~?threshold=60&interval=15",
+                "/restapi/v1.0/glip/teams"
+            ],
+            "deliveryMode": {
+                "transportType": "WebHook",
+                "address": REDIRECT_HOST + "/incoming/callback"
+            },
+            "expiresIn": 604799
+        };
+        let response = await platform.post('/subscription', requestData)
+        let subscriptionId = response.json().id
+
+        return subscriptionId
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
 }
 
 const renewSubscription = (id) => {
@@ -41,7 +46,7 @@ const renewSubscription = (id) => {
 }
 
 module.exports = {
-    subscribeToEvents:subscribeToEvents,
-    renewSubscription:renewSubscription
+    subscribeToEvents: subscribeToEvents,
+    renewSubscription: renewSubscription
 }
 

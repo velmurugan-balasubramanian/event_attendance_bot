@@ -1,4 +1,3 @@
-
 const db = require('../db')
 
 const create = async (card_id, conversation_id, creator_id, creator_email, ticket_id, event_id) => {
@@ -30,8 +29,8 @@ const createTeam = async (team) => {
 // create table events(event_id varchar(1000) primary key, event_name varchar(1000), event_origin varchar(1000),event_owner varchar(1000), attendees varchar(100) [], attending varchar(100) [], not_attending varchar(100)[], event_date date, event_start_time time, event_end_time time )
 const createEvent = async (event_id, event, members) => {
     try {
-        const dbQuery = "INSERT INTO events (event_id, event_name, event_origin, event_owner, attendees, attending, not_attending , event_date, event_start_time, event_end_time  ) values ($1, $2, $3, $4,$5, $6, $7, $8, $9, $10) returning *"
-        const dbValubes = [event_id, event.event_name, event.event_origin, event.event_owner, members, [], [], event.event_date, event.event_start_time, event.event_end_time];
+        const dbQuery = "INSERT INTO events (event_id, event_name, event_origin, event_owner, attendees, attending, not_attending , event_date, event_start_time, event_end_time, maybe_attending, vaccinated, not_vaccinated, vaccination_status_not_disclosed, did_attend, did_not_attend ) values ($1, $2, $3, $4,$5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) returning *"
+        const dbValubes = [event_id, event.event_name, event.event_origin, event.event_owner, members, [], [], event.event_date, event.event_start_time, event.event_end_time, [], [], [], [], [], []];
         const dbResults = await db.query(dbQuery, dbValubes);
         return dbResults;
     } catch (error) {
@@ -157,8 +156,8 @@ const getTeamMemebers = async (teamID) => {
 const saveToken = async (tokenData) => {
     try {
         console.log("TOKEN data", tokenData);
-        const dbQuery = "INSERT INTO tokens (token_type, access_token, expires_in, refresh_token, refresh_token_expires_in) values ($1, $2, $3, $4, $5) returning *"
-        const dbValues = [tokenData.token_type, tokenData.access_token, tokenData.expires_in, tokenData.refresh_token, tokenData.refresh_token_expires_in]
+        const dbQuery = "INSERT INTO tokens (token_type, access_token, expires_in, refresh_token, refresh_token_expires_in, accountId, subscriptionId) values ($1, $2, $3, $4, $5, $6, $7) returning *"
+        const dbValues = [tokenData.token_type, tokenData.access_token, tokenData.expires_in, tokenData.refresh_token, tokenData.refresh_token_expires_in, tokenData.accountId, tokenData.owner_id]
         const dbResults = await db.query(dbQuery, dbValues);
         console.log('dbResults', dbResults);
     } catch (error) {
@@ -181,7 +180,7 @@ const getToken = async () => {
         // console.log('dbResults', dbResults);
         return dbResults
     } catch (error) {
-        
+
     }
 
 }
@@ -201,9 +200,33 @@ const getEvents = async (event_owner) => {
     }
 }
 
+const findTokenFromSubscriptionId = async (subscriptionId) => {
+    try {
+        const dbQuery = "SELECT * FROM tokens where subscriptionId = $1"
+        const dbValubes = [subscriptionId];
+        const dbResults = await db.query(dbQuery, dbValubes);
+        // console.log('dbResults', dbResults);
+        return dbResults
+    } catch (error) {
+
+    }
+}
+
+const findTokenFromAccountId = async (accountId) => {
+    try {
+        const dbQuery = "SELECT * FROM tokens where accountId = $1"
+        const dbValubes = [accountId];
+        const dbResults = await db.query(dbQuery, dbValubes);
+        // console.log('dbResults', dbResults);
+        return dbResults
+    } catch (error) {
+
+    }
+}
+
 const getRSVPDetails = async (eventId) => {
     try {
-        const dbQuery = "select attendees, attending, not_attending from events where event_id = $1"
+        const dbQuery = "select attendees, attending, not_attending, maybe_attending from events where event_id = $1"
         const dbValubes = [eventId];
         const dbResults = await db.query(dbQuery, dbValubes)
 
@@ -226,8 +249,10 @@ module.exports = {
     updateRSVP: updateRSVP,
     saveToken: saveToken,
     getToken: getToken,
-    getEvents:getEvents,
-    getRSVPDetails:getRSVPDetails
+    getEvents: getEvents,
+    getRSVPDetails: getRSVPDetails,
+    findTokenFromSubscriptionId: findTokenFromSubscriptionId,
+    findTokenFromAccountId: findTokenFromAccountId
 }
 
 

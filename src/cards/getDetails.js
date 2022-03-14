@@ -1,6 +1,5 @@
 
 const getDetails = async (events) => {
-    console.log('GET details',events);
 
     let card = {
         "type": "AdaptiveCard",
@@ -16,30 +15,7 @@ const getDetails = async (events) => {
             },
             {
                 "type": "TextBlock",
-                "text": "Choose action",
-                "wrap": true
-            },
-            {
-                "type": "Input.ChoiceSet",
-                "id": "get_rsvp",
-                "choices": [
-                    {
-                        "title": "Get RSVP Yes",
-                        "value": "yes"
-                    },
-                    {
-                        "title": "Get RSVP No",
-                        "value": "no"
-                    },
-                    {
-                        "title": "Get all the attendees ",
-                        "value": "all"
-                    }
-                ]
-            },
-            {
-                "type": "TextBlock",
-                "text": "Choose Team",
+                "text": "Choose an Event to get Details",
                 "wrap": true
             },
             {
@@ -57,7 +33,7 @@ const getDetails = async (events) => {
 
     }
 
-    console.log('card',card);
+    console.log('card', card);
     return card
 
 }

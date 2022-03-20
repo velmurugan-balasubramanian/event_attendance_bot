@@ -70,7 +70,7 @@ const updateEvent = async (event) => {
         const dbResults = await db.query(dbQuery, dbValubes);
         return dbResults;
     } catch (error) {
-
+        console.log(error);
     }
 
 }

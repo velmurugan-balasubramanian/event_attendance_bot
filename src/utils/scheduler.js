@@ -23,49 +23,66 @@ const getTimeZones = async () => {
 
 }
 
-const createReminder = async (cardData) => {
-    let cronURL = process.env.CRON_URL
-    let cronAPIKey = process.env.CRON_API_KEY
-    let incomingCRONURL = process.env.INCOMING_SCHEDULAR_URL
-
+const createReminder = async (cardData, event_date, event_start_time, remindBefore, timezone) => {
     console.log('Timezone', cardData);
     try {
-        let cronString = await constructCRON(cardData)
-        let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${incomingCRONURL}&cron_expression=${cronString}&timezone_from=2&timezone=${cardData.timezone}`
-        console.log('Cron Request URL', cronRequestUrl);
-
-        const response = await fetch(cronRequestUrl, {});
-        const data = await response.json();
-        console.log('Data',data);
-        return data
-
+        await createCRONJob(cardData, event_date, event_start_time, remindBefore, timezone)
     } catch (error) {
         console.error('Unable to Schedule a Cron Job');
         console.error(error);
     }
 }
 
-const constructCRON = async (cardData) => {
+const createCRONJob = async (cardData, event_date, event_start_time, remindBefore, timezone) => {
 
-    const dt = new Date(`${cardData.event_date} ${cardData.event_start_time}`)
-    let remindBefore = 0;
+    let cronURL = process.env.CRON_URL
+    let cronAPIKey = process.env.CRON_API_KEY
+    let incomingCRONURL = process.env.INCOMING_SCHEDULAR_URL
+
+    try {
+
+        let cronString = await constructCRONString(event_date, event_start_time, remindBefore)
+        let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${incomingCRONURL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
+        const response = await fetch(cronRequestUrl, {});
+        const data = await response.json();
+        return data
+
+    } catch (error) {
+        console.error('Unable to Create a cron JOB');
+        console.error(error);
+    }
+
+
+}
+
+const constructCRONString = async (event_date, event_start_time, remindBefore) => {
+
+    const dt = new Date(`${event_date} ${event_start_time}`)
     let minute = dt.getMinutes();
     let hour = dt.getHours();
     let date = dt.getDate()
     let month = dt.getMonth() + 1
     let year = dt.getFullYear();
-    if (minute < remindBefore) {
-        minute = (60 + minute) - remindBefore
-        hour = hour === 00 ? 23 : hour - 1
+    let eventStartTImeInMinutes = (hour * 60) + minute
+    if (eventStartTImeInMinutes < remindBefore) {
+        date = date - 1;
+        let refMin = 1440 - (remindBefore - eventStartTImeInMinutes)
+        minute = refMin % 60
+        hour = Math.floor(refMin / 60)
+        console.log('insode IF', `${hour} ${minute}`);
     } else {
-        minute = minute - remindBefore
+        let refMin = eventStartTImeInMinutes - remindBefore
+        minute = refMin % 60
+        hour = Math.floor(refMin / 60);
+        console.log('INside else', `${hour} ${minute}`);
     }
 
-    let cronString = `${minute} ${hour} ${date} ${month} * ${year}`
-
-    return cronString
+    // Return the Cron String
+    return `${minute} ${hour} ${date} ${month} * ${year}`
 
 }
+
+
 
 module.exports = {
     getTimeZones: getTimeZones,

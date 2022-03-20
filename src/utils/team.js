@@ -105,17 +105,6 @@ const getAllAttendees = async (token, rsvp, status) => {
 
 }
 
-
-
-// const getTimeZones = async () => {
-//     try {
-//         let response = await platform.get('')
-//     } catch (error) {
-
-//     }
-// }
-
-
 module.exports = {
     getTeam: getTeam,
     getPerson: getPerson,

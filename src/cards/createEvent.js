@@ -154,12 +154,58 @@ const createEvent = async (event_origin, event_owner, text) => {
             },
             {
                 "type": "TextBlock",
-                "text": "Remind Users before",
+                "text": "Remind attendeed",
+                "wrap": true
+            },
+            {
+                "type": "TextBlock",
+                "text": "First reminder before",
                 "wrap": true
             },
             {
                 "type": "Input.ChoiceSet",
-                "id": "remindBefore",
+                "id": "first_reminder",
+                "isRequired": true,
+                "value": "60",
+                "choices": [
+                    {
+                        "title": "15 Minutes",
+                        "value": "15"
+                    },
+                    {
+                        "title": "30 Minutes",
+                        "value": "30"
+                    },
+                    {
+                        "title": "45 Minutes",
+                        "value": "45"
+                    },
+                    {
+                        "title": "1 Hour",
+                        "value": "60"
+                    },
+                    {
+                        "title": "2 Hours",
+                        "value": "120"
+                    },
+                    {
+                        "title": "4 Hours",
+                        "value": "240"
+                    },
+                    {
+                        "title": "1 Day",
+                        "value": "1440"
+                    }
+                ]
+            },
+            {
+                "type": "TextBlock",
+                "text": "Second Reminder before",
+                "wrap": true
+            },
+            {
+                "type": "Input.ChoiceSet",
+                "id": "second_reminder",
                 "isRequired": true,
                 "value": "60",
                 "choices": [

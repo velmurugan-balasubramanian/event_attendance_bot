@@ -50,11 +50,10 @@ const createConversation = async (token, members) => {
 // change function name to send RSVP cards 
 const notifyAttendees = async (bot_id, event_type, token, event) => {
 
-    console.log("Token", event);
+    // console.log("Token", event);
 
 
     try {
-        console.log('event.attendees', event.attendees);
         event.attendees.forEach(async (member) => {
             let conversation = await createConversation(token,
                 {
@@ -89,12 +88,11 @@ const getAllAttendees = async (token, rsvp, status) => {
         if (rsvp === 'no' && status.not_attending.length > 0) list = status.not_attending
         if (rsvp === 'all' && status.attendees.length > 0) list = status.attendees
 
-        console.log('List', list);
 
         list.forEach(async (personID, idx) => {
             let person = await getPerson(token, personID);
             if (person) {
-                console.log('Person', person);
+                // console.log('Person', person);
             }
 
         })

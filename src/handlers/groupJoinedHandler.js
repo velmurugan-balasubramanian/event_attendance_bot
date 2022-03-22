@@ -11,7 +11,7 @@ const GroupJoined = async (token, teamId) => {
         // Create a DB entry with team details in the team table
         let dbResult = await dbUtil.createTeam(teamDetails)
 
-        console.log('dbResult', dbResult);
+        // console.log('dbResult', dbResult);
         return true
     } catch (error) {
         console.error(error);

@@ -6,7 +6,7 @@ const create = async (card_id, conversation_id, creator_id, creator_email, ticke
     const dbValubes = [card_id, conversation_id, creator_id, creator_email, ticket_id, event_id];
     const dbResults = await db.query(dbQuery, dbValubes)
 
-    console.log('dbResults', dbResults);
+    // console.log('dbResults', dbResults);
     return dbResults;
 }
 
@@ -63,14 +63,14 @@ const getEvent = async (event_id) => {
  */
 const updateEvent = async (event) => {
 
-    console.log('Update event', event);
+    // console.log('Update event', event);
     try {
         const dbQuery = "UPDATE events SET event_name = $1, event_date = $2, event_start_time = $3, event_end_time = $4 where event_id = $5 returning *"
         const dbValubes = [event.event_name, event.event_date, event.event_start_time, event.event_end_time, event.event_id]
         const dbResults = await db.query(dbQuery, dbValubes);
         return dbResults;
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
 }
@@ -161,7 +161,7 @@ const getTeamMemebers = async (teamID) => {
         const dbResults = await db.query(dbQuery, dbValubes)
 
 
-        console.log('dbResults', dbResults);
+        // console.log('dbResults', dbResults);
         return dbResults
     } catch (error) {
 
@@ -180,10 +180,10 @@ const saveToken = async (tokenData) => {
         const dbQuery = "INSERT INTO tokens (token_type, access_token, expires_in, refresh_token, refresh_token_expires_in, accountId, subscriptionId) values ($1, $2, $3, $4, $5, $6, $7) returning *"
         const dbValues = [tokenData.token_type, tokenData.access_token, tokenData.expires_in, tokenData.refresh_token, tokenData.refresh_token_expires_in, tokenData.accountId, tokenData.owner_id]
         const dbResults = await db.query(dbQuery, dbValues);
-        console.log('dbResults', dbResults);
+        // console.log('dbResults', dbResults);
     } catch (error) {
-        console.log('error saving token');
-        console.log(error);
+        console.error('error saving token');
+        console.error(error);
     }
 
 

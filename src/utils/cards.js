@@ -12,7 +12,7 @@ const sendMessage = async (token, msg, group) => {
         })
 
     } catch (error) {
-        console.log('Unable to Send message to the group');
+        console.error('Unable to Send message to the group');
         console.log(error)
     }
 }

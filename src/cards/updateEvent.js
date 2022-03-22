@@ -2,11 +2,11 @@ const schedulerUtil = require('../utils/scheduler')
 
 const updateEvent = async (event, cardData) => {
 
-    console.log('cardData', cardData);
+    // console.log('cardData', cardData);
 
     let timeZones = await schedulerUtil.getTimeZones()
     let dt = new Date(event.event_date);
-    console.log('date++++', `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`);
+    // console.log('date++++', `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`);
     let eventDate = `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`
 
 

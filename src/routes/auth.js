@@ -14,7 +14,7 @@ const REDIRECT_HOST = process.env.REDIRECT_HOST;
  */
 router.get('/oauth', async (req, res) => {
 
-    console.log("Oauth GET", req.query);
+    // console.log("Oauth GET", req.query);
 
     if (!req.query.code) {
         res.status(500).send({ "Error": "No authorization token received." }).end();
@@ -26,7 +26,7 @@ router.get('/oauth', async (req, res) => {
                 code: req.query.code,
                 redirectUri: REDIRECT_HOST + '/auth/oauth'
             }
-            console.log('Params', params);
+            // console.log('Params', params);
             var resp = await platform.login(params)
             // Get bot access token. The tokens is per user's account
             var token = await resp.json()

@@ -88,7 +88,7 @@ const eventDetails = async (eventDetails) => {
 
     }
 
-    console.log('card', card);
+    // console.log('card', card);
     return card
 
 }

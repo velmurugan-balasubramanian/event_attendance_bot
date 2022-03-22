@@ -5,14 +5,14 @@ const editRSVP = require('../cards/updateRSVP');
 
 
 const invitationAction = async (cardBody, token) => {
-    console.log('card',cardBody );
+    // console.log('card',cardBody );
     try {
 
         let results = await dbUtil.updateRSVP(cardBody.data, cardBody.user.accountId);
 
         let event = await dbUtil.getEvent(cardBody.data.event_id);
 
-        console.log('cardBody.data', cardBody.data);
+        // console.log('cardBody.data', cardBody.data);
         let updateInvitationCard = await updateCard(token, cardBody.conversation.id, cardBody.card.id, editRSVP(event.rows[0], cardBody.data));
         return true
 

@@ -28,7 +28,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
         }
         // Ignore the message posted by bot
         if (ownerId === creatorId) {
-            console.log("Ignoring message posted by bot.");
+            // console.log("Ignoring message posted by bot.");
             return
         }
         else if (CREATE_COMMANDS.includes(botCommand)) {

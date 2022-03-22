@@ -39,7 +39,7 @@ const getDetails = async (events, bot_id) => {
 
     }
 
-    console.log('card', card);
+    // console.log('card', card);
     return card
 
 }

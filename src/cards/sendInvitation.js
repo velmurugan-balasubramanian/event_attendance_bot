@@ -9,7 +9,6 @@ const sendInvitation = (bot_id, event_type, event) => {
 
     let eventType = event_type
 
-    console.log('eventType',eventType);
 
     let card = {
         "type": "AdaptiveCard",

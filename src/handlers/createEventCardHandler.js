@@ -11,7 +11,7 @@ const updateEvent = require('../cards/updateEvent');
 
 
 createEventCardAction = async (cardbody, token) => {
-    console.log('Crd body', cardbody);
+    // console.log('Crd body', cardbody);
 
     try {
         // Get list of members from the team from which the create event was triggered

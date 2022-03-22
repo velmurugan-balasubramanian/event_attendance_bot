@@ -26,7 +26,7 @@ router.get('/test', async (req, res) => {
 
 router.post('/callback', async (req, res) => {
 
-    console.log('body', req.body);
+    // console.log('body', req.body);
 
     // owner_id
     const response = await dbUtil.findTokenFromSubscriptionId(req.body.ownerId);
@@ -86,7 +86,7 @@ router.post('/callback', async (req, res) => {
  */
 router.post('/interactive', async function (req, res) {
 
-    console.log("LOG", req.body);
+    // console.log("LOG", req.body);
   const response = await dbUtil.findTokenFromSubscriptionId(req.body.data.bot_id);
 
   const token = response.rows[0];
@@ -148,8 +148,8 @@ router.post('/interactive', async function (req, res) {
             // await teamUtil.getAllAttendees(token, req.body.data.get_rsvp, result.rows[0])
             await updateCard(token, req.body.conversation.id, req.body.card.id, await eventDetails(result.rows[0]));
 
-            console.log('RESULT', result.rows[0]);
-            console.log('RESULT', `${result.rows[0].attendees.length} ${result.rows[0].attending.length} ${result.rows[0].not_attending.length} ${result.rows[0].maybe_attending.length}`);
+            // console.log('RESULT', result.rows[0]);
+            // console.log('RESULT', `${result.rows[0].attendees.length} ${result.rows[0].attending.length} ${result.rows[0].not_attending.length} ${result.rows[0].maybe_attending.length}`);
             res.json({ 'success': true }).status(200)
 
         }

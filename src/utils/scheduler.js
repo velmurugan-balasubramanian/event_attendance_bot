@@ -17,7 +17,7 @@ const getTimeZones = async () => {
         })
         return timeZonesArray
     } catch (error) {
-        console.log('Unable to get timeZones');
+        console.error('Unable to get timeZones');
         console.error("error", error);
     }
 
@@ -72,12 +72,12 @@ const constructCRONString = async (event_date, event_start_time, remindBefore) =
         let refMin = 1440 - (remindBefore - eventStartTImeInMinutes)
         minute = refMin % 60
         hour = Math.floor(refMin / 60)
-        console.log('insode IF', `${hour} ${minute}`);
+        // console.log('insode IF', `${hour} ${minute}`);
     } else {
         let refMin = eventStartTImeInMinutes - remindBefore
         minute = refMin % 60
         hour = Math.floor(refMin / 60);
-        console.log('INside else', `${hour} ${minute}`);
+        // console.log('INside else', `${hour} ${minute}`);
     }
 
     // Return the Cron String

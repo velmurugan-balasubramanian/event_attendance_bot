@@ -86,9 +86,10 @@ router.post('/callback', async (req, res) => {
  */
 router.post('/interactive', async function (req, res) {
 
+    console.log("LOG", req.body);
+  const response = await dbUtil.findTokenFromSubscriptionId(req.body.data.bot_id);
 
-    const response = await dbUtil.findTokenFromAccountId(req.body.user.accountId);
-    const token = response.rows[0];
+  const token = response.rows[0];
 
     try {
 
@@ -139,19 +140,6 @@ router.post('/interactive', async function (req, res) {
             }
 
         }
-
-        // if (req.body.data.action === 'edit_rsvp') {
-        //     let isActionSuccess = await editRSVPAction()
-
-        //     if (isActionSuccess) {
-        //         res.json({ 'success': true }).status(200);
-        //         return
-        //     }
-        //     if (!isActionSuccess) {
-        //         res.json({ 'success': false }).status(500);
-        //         return
-        //     }
-        // }
 
         if (req.body.data.action === 'get_details') {
             let eventId = req.body.data.event

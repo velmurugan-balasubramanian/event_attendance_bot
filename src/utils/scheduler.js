@@ -23,26 +23,29 @@ const getTimeZones = async () => {
 
 }
 
-const createReminder = async (cardData, event_date, event_start_time, remindBefore, timezone) => {
-    console.log('Timezone', cardData);
+const createReminder = async (event_id, event_date, event_start_time, remindBefore, timezone, event_type) => {
+    // console.log('Timezone', cardData);
     try {
-        await createCRONJob(cardData, event_date, event_start_time, remindBefore, timezone)
+        await createCRONJob(event_id, event_date, event_start_time, remindBefore, timezone, event_type)
     } catch (error) {
         console.error('Unable to Schedule a Cron Job');
         console.error(error);
     }
 }
 
-const createCRONJob = async (cardData, event_date, event_start_time, remindBefore, timezone) => {
+const createCRONJob = async (event_id, event_date, event_start_time, remindBefore, timezone, event_type) => {
 
     let cronURL = process.env.CRON_URL
     let cronAPIKey = process.env.CRON_API_KEY
     let incomingCRONURL = process.env.INCOMING_SCHEDULAR_URL
+    let URL = encodeURIComponent(`${incomingCRONURL}?event_id=${event_id}&event_type=${event_type}`)
 
     try {
 
         let cronString = await constructCRONString(event_date, event_start_time, remindBefore)
-        let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${incomingCRONURL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
+        // let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${incomingCRONURL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
+        let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${URL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
+
         const response = await fetch(cronRequestUrl, {});
         const data = await response.json();
         return data

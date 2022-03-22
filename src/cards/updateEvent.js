@@ -2,12 +2,22 @@ const schedulerUtil = require('../utils/scheduler')
 
 const updateEvent = async (event, cardData) => {
 
-    console.log('cardData',cardData);
+    console.log('cardData', cardData);
 
     let timeZones = await schedulerUtil.getTimeZones()
     let dt = new Date(event.event_date);
     console.log('date++++', `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`);
     let eventDate = `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`
+
+
+    let eventImages = {
+        'sports': 'https://img.icons8.com/stickers/452/sport.png',
+        'concert': 'https://img.icons8.com/stickers/344/rock-music.png',
+        'dinner': 'https://img.icons8.com/stickers/344/food-and-wine.png',
+        'lunch': 'https://img.icons8.com/stickers/344/pizza.png'
+    }
+    let eventType = cardData.event_type
+
 
     let card = {
         "type": "AdaptiveCard",
@@ -29,7 +39,7 @@ const updateEvent = async (event, cardData) => {
             {
                 "type": "Input.Text",
                 "id": "event_type",
-                "value": cardData.event_type,
+                "value": eventType,
                 "isVisible": false,
             },
             {
@@ -37,6 +47,37 @@ const updateEvent = async (event, cardData) => {
                 "id": "event_id",
                 "value": `${event.event_id}`,
                 "isVisible": false,
+            },
+            {
+                "type": "ColumnSet",
+                "columns": [
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "Image",
+                                "url": eventImages[eventType],
+                                "size": "small",
+                                "style": "person"
+                            }
+                        ],
+                        "width": "auto"
+                    },
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "size": "large",
+                                "color": "dark",
+                                "weight": "Bolder",
+                                "text": `Create a ${eventType} Event`,
+                                "wrap": true
+                            }
+                        ],
+                        "width": "auto"
+                    }
+                ]
             },
             {
                 "type": "TextBlock",

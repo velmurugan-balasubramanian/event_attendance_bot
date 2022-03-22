@@ -54,7 +54,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
                 const title = event['event_name'] || 'Sample'
                 return { title, value }
             });
-            let getDetailsCard = await getDetails(events);
+            let getDetailsCard = await getDetails(events, ownerId);
             await sendCard(token, getDetailsCard, groupId);
         }
         else {

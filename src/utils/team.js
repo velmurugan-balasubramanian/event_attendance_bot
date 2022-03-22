@@ -48,10 +48,10 @@ const createConversation = async (token, members) => {
 }
 
 // change function name to send RSVP cards 
-const notifyAttendees = async (bot_id, token, event) => {
+const notifyAttendees = async (bot_id, event_type, token, event) => {
 
     console.log("Token", event);
-    
+
 
     try {
         console.log('event.attendees', event.attendees);
@@ -70,7 +70,7 @@ const notifyAttendees = async (bot_id, token, event) => {
             )
 
             // await sendCard(rsvp(event.event_id), conversation.id)
-            await sendCard(token, sendInvitation(event), conversation.id)
+            await sendCard(token, sendInvitation(bot_id, event_type, event), conversation.id)
             // await sendMessage(token, "BUlk message", conversation.id);
         });
         return true

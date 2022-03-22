@@ -1,7 +1,15 @@
-const editRSVP = (event, rsvp) => {
+const editRSVP = (event, cardBody) => {
     console.log("EVENT", event);
-    console.log("RSVP in update rsvp", rsvp);
+    console.log("RSVP in update rsvp", cardBody.event_type);
 
+    let eventImages = {
+        'sports': 'https://img.icons8.com/stickers/452/sport.png',
+        'concert': 'https://img.icons8.com/stickers/344/rock-music.png',
+        'dinner': 'https://img.icons8.com/stickers/344/food-and-wine.png',
+        'lunch': 'https://img.icons8.com/stickers/344/pizza.png'
+    }
+
+    let eventType = cardBody.event_type
 
     let card = {
         "type": "AdaptiveCard",
@@ -21,10 +29,53 @@ const editRSVP = (event, rsvp) => {
                 "isVisible": false,
             },
             {
+                "type": "Input.Text",
+                "id": "event_type",
+                "value": eventType,
+                "isVisible": false,
+            },
+            {
+                "type": "Input.Text",
+                "id": "bot_id",
+                "value": cardBody.bot_id,
+                "isVisible": false,
+            },
+            {
+                "type": "ColumnSet",
+                "columns": [
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "Image",
+                                "url": eventImages[eventType],
+                                "size": "small",
+                                "style": "person"
+                            }
+                        ],
+                        "width": "auto"
+                    },
+                    {
+                        "type": "Column",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "size": "large",
+                                "color": "dark",
+                                "weight": "Bolder",
+                                "text": `invitation to the ${event.event_name} event`,
+                                "wrap": true
+                            }
+                        ],
+                        "width": "auto"
+                    }
+                ]
+            },
+            {
                 "type": "TextBlock",
                 "size": "Medium",
                 "weight": "Bolder",
-                "text": `You RSVPd ${rsvp.rsvp} for the event  ${event.event_name} on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time.substring(0,5)} and ${event.event_end_time.substring(0,5)}`,
+                "text": `You RSVPd ${cardBody.rsvp} for the event  ${event.event_name} on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time.substring(0, 5)} and ${event.event_end_time.substring(0, 5)}`,
                 "wrap": true
             },
         ],
@@ -55,7 +106,7 @@ const editRSVP = (event, rsvp) => {
                         {
                             "type": "Input.ChoiceSet",
                             "id": "rsvp",
-                            "value": rsvp.rsvp,
+                            "value": cardBody.rsvp,
                             "choices": [
                                 {
                                     "title": "Yes",
@@ -79,7 +130,7 @@ const editRSVP = (event, rsvp) => {
                         {
                             "type": "Input.ChoiceSet",
                             "id": "vaccination",
-                            "value": rsvp.vaccination,
+                            "value": cardBody.vaccination,
                             "choices": [
                                 {
                                     "title": "Yes",

@@ -1,5 +1,5 @@
 
-const getDetails = async (events) => {
+const getDetails = async (events, bot_id) => {
 
     let card = {
         "type": "AdaptiveCard",
@@ -12,6 +12,12 @@ const getDetails = async (events) => {
                 "value": "get_details",
                 "isVisible": false,
                 "placeholder": "Enter a name for the event",
+            },
+            {
+                "type": "Input.Text",
+                "id": "bot_id",
+                "value": bot_id,
+                "isVisible": false,
             },
             {
                 "type": "TextBlock",

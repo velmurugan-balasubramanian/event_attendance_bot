@@ -49,37 +49,13 @@ const editRSVP = (event, rsvp) => {
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Are you Vaccinated",
-                            "wrap": true
-                        },
-                        {
-                            "type": "Input.ChoiceSet",
-                            "id": "vaccination",
-                            "value": "1",
-                            "choices": [
-                                {
-                                    "title": "Yes",
-                                    "value": "yes"
-                                },
-                                {
-                                    "title": "No",
-                                    "value": "no"
-                                },
-                                {
-                                    "title": "Do not want to disclose",
-                                    "value": "dwts"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "TextBlock",
                             "text": "RSVP",
                             "wrap": true
                         },
                         {
                             "type": "Input.ChoiceSet",
                             "id": "rsvp",
-                            "value": "1",
+                            "value": rsvp.rsvp,
                             "choices": [
                                 {
                                     "title": "Yes",
@@ -92,6 +68,30 @@ const editRSVP = (event, rsvp) => {
                                 {
                                     "title": "Maybe",
                                     "value": "maybe"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Are you Vaccinated",
+                            "wrap": true
+                        },
+                        {
+                            "type": "Input.ChoiceSet",
+                            "id": "vaccination",
+                            "value": rsvp.vaccination,
+                            "choices": [
+                                {
+                                    "title": "Yes",
+                                    "value": "yes"
+                                },
+                                {
+                                    "title": "No",
+                                    "value": "no"
+                                },
+                                {
+                                    "title": "Do not want to disclose",
+                                    "value": "dwts"
                                 }
                             ]
                         }

@@ -32,7 +32,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             return
         }
         else if (CREATE_COMMANDS.includes(botCommand)) {
-
+            console.info("Found bot command")
             // Get details of the user that created the event
             let person = await teamUtil.getPerson(token, creatorId);
 
@@ -40,7 +40,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             let conversation = await teamUtil.createConversation(token, { members: [{ id: person.id }, { id: ownerId }] })
 
             //  Send a card to create event 
-            await sendCard(token, await createEvent(groupId, creatorId, botCommand), conversation.id);
+            await sendCard(token, await createEvent(ownerId, groupId, creatorId, botCommand), conversation.id);
         }
         else if (botCommand === "bot help") {
             await sendMessage(token, "Hey, using me you can create and schedule events including sports events, Lunch, dinner or coffee events and concerts ", req.body.body.groupId)

@@ -104,23 +104,44 @@ const createCard = async (card_id, receiver_id, conversation_id, event) => {
  * @returns 
  */
 const updateRSVP = async (event, user_id) => {
+
+    const rsvpMap = new Map();
+    const vaccinationStatusMap = new Map();
+
+    rsvpMap.set('yes', 'attending = array_append(attending, $1 ), not_attending = array_remove(not_attending,$1), maybe_attending =  array_remove(maybe_attending,$1)')
+    rsvpMap.set('no', 'attending = array_remove(attending, $1 ), not_attending = array_append(not_attending,$1), maybe_attending =  array_remove(maybe_attending,$1)')
+    rsvpMap.set('maybe', 'attending = array_remove(attending, $1 ), not_attending = array_remove(not_attending,$1), maybe_attending =  array_append(maybe_attending,$1)')
+
+    vaccinationStatusMap.set('yes', 'vaccinated = array_append(vaccinated, $1 ) , not_vaccinated = array_remove(not_vaccinated,$1), vaccination_status_not_disclosed = array_remove(vaccination_status_not_disclosed,$1)');
+    vaccinationStatusMap.set('no', 'vaccinated = array_remove(vaccinated, $1 ) , not_vaccinated = array_append(not_vaccinated,$1), vaccination_status_not_disclosed = array_remove(vaccination_status_not_disclosed,$1)')
+    vaccinationStatusMap.set('dwts', 'vaccinated = array_remove(vaccinated, $1 ) , not_vaccinated = array_remove(not_vaccinated,$1), vaccination_status_not_disclosed = array_append(vaccination_status_not_disclosed,$1)')
+
+
+
     try {
-        if (event.rsvp === 'yes') {
 
-            const dbQuery = "UPDATE events set not_attending = array_remove(not_attending,$1), attending = array_append(attending, $1 ) where event_id = $2 returning *"
-            const dbValubes = [user_id, event.event_id];
-            const dbResults = await db.query(dbQuery, dbValubes);
-            return dbResults;
-        }
-        if (event.rsvp === 'no') {
+        const dbQuery = `UPDATE events set ${rsvpMap.get(event.rsvp)},${vaccinationStatusMap.get(event.vaccination)}  where event_id = $2 returning *`
+        const dbValubes = [user_id, event.event_id];
+        const dbResults = await db.query(dbQuery, dbValubes);
+        return dbResults;
+        // if (event.rsvp === 'yes') {
 
-            const dbQuery = "UPDATE events set attending = array_remove(attending, $1), not_attending = array_append(not_attending, $1 ) where event_id = $2 returning *"
-            const dbValubes = [user_id, event.event_id];
-            const dbResults = await db.query(dbQuery, dbValubes);
-            return dbResults;
-        }
+        //     const dbQuery = "UPDATE events set not_attending = array_remove(not_attending,$1), attending = array_append(attending, $1 ) where event_id = $2 returning *"
+        //     const dbValubes = [user_id, event.event_id];
+        //     const dbResults = await db.query(dbQuery, dbValubes);
+        //     return dbResults;
+        // }
+        // if (event.rsvp === 'no') {
+
+        //     const dbQuery = "UPDATE events set attending = array_remove(attending, $1), not_attending = array_append(not_attending, $1 ) where event_id = $2 returning *"
+        //     const dbValubes = [user_id, event.event_id];
+        //     const dbResults = await db.query(dbQuery, dbValubes);
+        //     return dbResults;
+        // }
+
     } catch (error) {
-
+        console.error('Unable to update RSVP');
+        console.error(error);
     }
 
 

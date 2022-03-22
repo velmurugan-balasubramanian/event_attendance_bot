@@ -125,7 +125,7 @@ router.post('/interactive', async function (req, res) {
         }
 
         // 
-        if (req.body.data.action === 'invitation') {
+        if ((req.body.data.action === 'invitation') || (req.body.data.action === 'edit_rsvp')) {
 
             let isActionSuccess = await invitationAction(req.body, token)
 
@@ -139,6 +139,19 @@ router.post('/interactive', async function (req, res) {
             }
 
         }
+
+        // if (req.body.data.action === 'edit_rsvp') {
+        //     let isActionSuccess = await editRSVPAction()
+
+        //     if (isActionSuccess) {
+        //         res.json({ 'success': true }).status(200);
+        //         return
+        //     }
+        //     if (!isActionSuccess) {
+        //         res.json({ 'success': false }).status(500);
+        //         return
+        //     }
+        // }
 
         if (req.body.data.action === 'get_details') {
             let eventId = req.body.data.event

@@ -11,6 +11,7 @@ const updateEvent = require('../cards/updateEvent');
 
 
 createEventCardAction = async (cardbody, token) => {
+    console.log('Crd body', cardbody);
 
     try {
         // Get list of members from the team from which the create event was triggered
@@ -23,10 +24,10 @@ createEventCardAction = async (cardbody, token) => {
         await dbUtil.createCard(token, cardbody.card.id, cardbody.user.accountId, cardbody.conversation.id, results.rows[0])
 
         // Update the existing card with the details
-        await updateCard(token, cardbody.conversation.id, cardbody.card.id, await updateEvent(results.rows[0]));
+        await updateCard(token, cardbody.conversation.id, cardbody.card.id, await updateEvent(results.rows[0], cardbody.data));
 
         // Send the invite cards to all the members to the team
-        await teamUtil.notifyAttendees(token, results.rows[0])
+        await teamUtil.notifyAttendees(cardbody.data.bot_id, token, results.rows[0])
 
         // Create a reminder to notify users later based on preference
         console.info('Creating First Reminder')

@@ -1,9 +1,13 @@
 const schedulerUtil = require('../utils/scheduler')
 
-const updateEvent = async (event) => {
+const updateEvent = async (event, cardData) => {
+
+    console.log('cardData',cardData);
 
     let timeZones = await schedulerUtil.getTimeZones()
-
+    let dt = new Date(event.event_date);
+    console.log('date++++', `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`);
+    let eventDate = `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`
 
     let card = {
         "type": "AdaptiveCard",
@@ -14,6 +18,18 @@ const updateEvent = async (event) => {
                 "type": "Input.Text",
                 "id": "action",
                 "value": "edit_event",
+                "isVisible": false,
+            },
+            {
+                "type": "Input.Text",
+                "id": "bot_id",
+                "value": cardData.bot_id,
+                "isVisible": false,
+            },
+            {
+                "type": "Input.Text",
+                "id": "event_type",
+                "value": cardData.event_type,
                 "isVisible": false,
             },
             {
@@ -81,7 +97,7 @@ const updateEvent = async (event) => {
                             "id": "event_date",
                             "placeholder": "Enter a date for the Event",
                             "isRequired": true,
-                            "value": event.event_date
+                            "value": eventDate
                         },
                         {
                             "type": "ColumnSet",
@@ -99,7 +115,7 @@ const updateEvent = async (event) => {
                                             "id": "event_start_time",
                                             "placeholder": "Enter event start time",
                                             "isRequired": true,
-                                            "value": `${event.event_start_time.substring(0,5)}`
+                                            "value": `${event.event_start_time.substring(0, 5)}`
                                         },
                                     ],
                                     "width": "auto"
@@ -117,7 +133,7 @@ const updateEvent = async (event) => {
                                             "id": "event_end_time",
                                             "placeholder": "Enter event end time",
                                             "isRequired": true,
-                                            "value": `${event.event_end_time.substring(0,5)}`
+                                            "value": `${event.event_end_time.substring(0, 5)}`
                                         },
                                     ],
                                     "width": "stretch"
@@ -133,17 +149,19 @@ const updateEvent = async (event) => {
                             "type": "Input.ChoiceSet",
                             "id": "timezone",
                             "isRequired": true,
+                            "value": cardData.timezone,
                             "choices": timeZones
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Remind Users before",
+                            "text": "First reminder before",
                             "wrap": true
                         },
                         {
                             "type": "Input.ChoiceSet",
-                            "id": "remindBefore",
+                            "id": "first_reminder",
                             "isRequired": true,
+                            "value": `${cardData.first_reminder}`,
                             "choices": [
                                 {
                                     "title": "15 Minutes",
@@ -176,15 +194,45 @@ const updateEvent = async (event) => {
                             ]
                         },
                         {
-                            "type": "Input.Toggle",
-                            "id": "send_reminder",
-                            "title": "Do you want to send reminder to the participants before the event?",
-                            "value": `${event.send_reminder}`,
-                            "valueOn": "true",
-                            "valueOff": "false",
-                            "label": "Please select to send notification to the participants",
-                            "isRequired": false,
-                            "errorMessage": "You must select"
+                            "type": "TextBlock",
+                            "text": "Second Reminder before",
+                            "wrap": true
+                        },
+                        {
+                            "type": "Input.ChoiceSet",
+                            "id": "second_reminder",
+                            "isRequired": true,
+                            "value": `${cardData.second_reminder}`,
+                            "choices": [
+                                {
+                                    "title": "15 Minutes",
+                                    "value": "15"
+                                },
+                                {
+                                    "title": "30 Minutes",
+                                    "value": "30"
+                                },
+                                {
+                                    "title": "45 Minutes",
+                                    "value": "45"
+                                },
+                                {
+                                    "title": "1 Hour",
+                                    "value": "60"
+                                },
+                                {
+                                    "title": "2 Hours",
+                                    "value": "120"
+                                },
+                                {
+                                    "title": "4 Hours",
+                                    "value": "240"
+                                },
+                                {
+                                    "title": "1 Day",
+                                    "value": "1440"
+                                }
+                            ]
                         }
                     ],
                     "actions": [

@@ -1,5 +1,5 @@
 const schedulerUtil = require('../utils/scheduler')
-const createEvent = async (event_origin, event_owner, text) => {
+const createEvent = async (bot_id, event_origin, event_owner, text) => {
 
     let timeZones = await schedulerUtil.getTimeZones()
 
@@ -26,6 +26,12 @@ const createEvent = async (event_origin, event_owner, text) => {
                 "type": "Input.Text",
                 "id": "action",
                 "value": "create_event",
+                "isVisible": false,
+            },
+            {
+                "type": "Input.Text",
+                "id": "bot_id",
+                "value": bot_id,
                 "isVisible": false,
             },
             {
@@ -238,17 +244,6 @@ const createEvent = async (event_origin, event_owner, text) => {
                         "value": "1440"
                     }
                 ]
-            },
-            {
-                "type": "Input.Toggle",
-                "id": "send_reminder",
-                "title": "Do you want to send reminder to the participants before the event?",
-                "value": "true",
-                "valueOn": "true",
-                "valueOff": "false",
-                "label": "Please select to send notification to the participants",
-                "isRequired": false,
-                "errorMessage": "You must select"
             }
         ],
         "actions": [

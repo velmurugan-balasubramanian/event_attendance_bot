@@ -48,9 +48,10 @@ const createConversation = async (token, members) => {
 }
 
 // change function name to send RSVP cards 
-const notifyAttendees = async (token, event) => {
+const notifyAttendees = async (bot_id, token, event) => {
 
     console.log("Token", event);
+    
 
     try {
         console.log('event.attendees', event.attendees);
@@ -62,7 +63,7 @@ const notifyAttendees = async (token, event) => {
                             id: member
                         },
                         {
-                            id: process.env.BOT_ID
+                            id: bot_id
                         }
                     ]
                 }

@@ -33,16 +33,17 @@ const subscribeToEvents = async (token) => {
 
 }
 
-const renewSubscription = (id) => {
+const renewSubscription = async (id) => {
     console.log("Renewing Subscription");
-    platform.post('/subscription/' + id + "/renew")
-        .then(function (response) {
-            var data = JSON.parse(response.text());
-            console.log("Subscription renewed. Next renewal:" + data.expirationTime);
-        }).catch(function (e) {
-            console.log("Error subscribing to bot events: ", e);
-            throw e;
-        });
+    let response = await platform.post('/subscription/' + id + "/renew")
+    return response
+    // .then(function (response) {
+    //     var data = JSON.parse(response.text());
+    //     console.log("Subscription renewed. Next renewal:" + data.expirationTime);
+    // }).catch(function (e) {
+    //     console.log("Error subscribing to bot events: ", e);
+    //     throw e;
+    // });
 }
 
 module.exports = {

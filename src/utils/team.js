@@ -4,7 +4,13 @@ const sendInvitation = require('../cards/sendInvitation')
 
 
 
-const getTeam = async (token, teamId) => {
+/**
+ * Get Team Details for a given team ID 
+ * @param {*} token token object to make API request to the platforms
+ * @param {*} teamId Team ID to fetch the team details from.
+ * @returns Team Object
+ */
+const getTeamDetails = async (token, teamId) => {
 
     try {
         await platform.auth().setData(token);
@@ -17,6 +23,13 @@ const getTeam = async (token, teamId) => {
 
 }
 
+
+/**
+ * Get User/Extenstion details of the given extension ID
+ * @param {*} token token object to make API request to the platforms
+ * @param {*} accountId Id for the profile to get details
+ * @returns 
+ */
 const getPerson = async (token, accountId) => {
 
     try {
@@ -25,13 +38,22 @@ const getPerson = async (token, accountId) => {
         let response = await platform.get(`/restapi/v1.0/glip/persons/${accountId}`)
         let person = response.json();
         return person
+
     } catch (error) {
+
         console.error(`Unable to get the user details of the User ${accountId}`);
         console.error(error);
+
     }
 
 }
 
+/**
+ * 
+ * @param {*} token token object to make API request to the platforms
+ * @param {*} members 
+ * @returns 
+ */
 const createConversation = async (token, members) => {
     try {
         await platform.auth().setData(token);
@@ -47,7 +69,14 @@ const createConversation = async (token, members) => {
 
 }
 
-// change function name to send RSVP cards 
+/**
+ * 
+ * @param {*} bot_id 
+ * @param {*} event_type 
+ * @param {*} token token object to make API request to the platforms
+ * @param {*} event 
+ * @returns 
+ */
 const notifyAttendees = async (bot_id, event_type, token, event) => {
 
     // console.log("Token", event);
@@ -78,7 +107,12 @@ const notifyAttendees = async (bot_id, event_type, token, event) => {
     }
 }
 
-
+/**
+ * 
+ * @param {*} token token object to make API request to the platforms
+ * @param {*} rsvp 
+ * @param {*} status 
+ */
 const getAllAttendees = async (token, rsvp, status) => {
 
     try {
@@ -105,7 +139,7 @@ const getAllAttendees = async (token, rsvp, status) => {
 }
 
 module.exports = {
-    getTeam: getTeam,
+    getTeamDetails: getTeamDetails,
     getPerson: getPerson,
     createConversation: createConversation,
     notifyAttendees: notifyAttendees,

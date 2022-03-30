@@ -12,14 +12,15 @@ const createEvent = require('../cards/createEvent');
 
 // List of commands the bot can accept
 const CREATE_COMMANDS = [
-    "bot create sports event",
-    "bot create lunch event",
-    "bot create a lunch event",
-    "bot create a dinner event",
-    "bot create dinner event",
-    "bot create a concert event",
-    "bot create concert event",
-    "bot create concert",
+    "create sports event",
+    "create lunch event",
+    "create a lunch event",
+    "create lunch event",
+    "create a dinner event",
+    "create dinner event",
+    "create a concert event",
+    "create concert event",
+    "create concert",
 ]
 
 /**
@@ -34,10 +35,7 @@ const CREATE_COMMANDS = [
 const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) => {
 
     try {
-
-        if (botCommand.indexOf("bot") < 0) {
-            return
-        }
+console.log('botCommand',botCommand);
         // Ignore the message posted by bot
         if (ownerId === creatorId) {
             // console.log("Ignoring message posted by bot.");

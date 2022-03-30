@@ -14,7 +14,7 @@ const REDIRECT_HOST = process.env.REDIRECT_HOST;
  */
 router.get('/oauth', async (req, res) => {
 
-    // console.log("Oauth GET", req.query);
+    console.log("Oauth GET", req.query);
 
     if (!req.query.code) {
         res.status(500).send({ "Error": "No authorization token received." }).end();
@@ -36,8 +36,7 @@ router.get('/oauth', async (req, res) => {
             token['refresh_token_expires_in'] = 10000000000;
             token['token_type'] = "bearer"
             token['accountId'] = jsonObj.account.id
-            // console.log('JAOn IO', jsonObj);
-            // token['subscriptionId']  = jsonObj.
+
             
             let subscriptionId = await subscribeToEvents();
 

@@ -1,6 +1,4 @@
-const editRSVP = (event, cardBody) => {
-    // console.log("EVENT", event);
-    // console.log("RSVP in update rsvp", cardBody.event_type);
+const editRSVP = async (event, cardBody) => {
 
     let eventImages = {
         'sports': 'https://img.icons8.com/stickers/452/sport.png',

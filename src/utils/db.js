@@ -35,11 +35,11 @@ const createEventEntry = async (event_id, event, members) => {
 }
 
 /**
- * 
+ * Function to fetch event details for the given event_id 
  * @param {*} event_id Event ID to fetch the event
- * @returns 
+ * @returns Event Object
  */
-const getEvent = async (event_id) => {
+const getEventFromDB = async (event_id) => {
     try {
         const dbQuery = "SELECT * from events where event_id = $1"
         const dbValubes = [event_id]
@@ -100,7 +100,7 @@ const createCardEntry = async (card_id, receiver_id, conversation_id, event) => 
  * @param {*} user_id 
  * @returns 
  */
-const updateRSVP = async (event, user_id) => {
+const updateRSVPInDB = async (event, user_id) => {
 
     const rsvpMap = new Map();
     const vaccinationStatusMap = new Map();
@@ -118,10 +118,11 @@ const updateRSVP = async (event, user_id) => {
         const dbQuery = `UPDATE events set ${rsvpMap.get(event.rsvp)},${vaccinationStatusMap.get(event.vaccination)}  where event_id = $2 returning *`
         const dbValubes = [user_id, event.event_id];
         const dbResults = await db.query(dbQuery, dbValubes);
+        console.info(`Updated the vaccination status`, { user_id: user_id, event_id: event.event_id })
         return dbResults;
 
     } catch (error) {
-        console.error('Unable to update RSVP');
+        console.error(`Unable to update RSVP`, { user_id: user_id, event_id: event.event_id });
         console.error(error);
     }
 
@@ -171,7 +172,7 @@ const getTeamMemebers = async (teamID) => {
 const saveToken = async (tokenData) => {
     try {
         console.log("TOKEN data", tokenData);
-        const dbQuery = "INSERT INTO tokens (token_type, access_token, expires_in, refresh_token, refresh_token_expires_in, accountId, subscriptionId) values ($1, $2, $3, $4, $5, $6, $7) returning *"
+        const dbQuery = "INSERT INTO tokens (token_type, access_token, expires_in, refresh_token, refresh_token_expires_in, account_id, bot_id) values ($1, $2, $3, $4, $5, $6, $7) returning *"
         const dbValues = [tokenData.token_type, tokenData.access_token, tokenData.expires_in, tokenData.refresh_token, tokenData.refresh_token_expires_in, tokenData.accountId, tokenData.owner_id]
         const dbResults = await db.query(dbQuery, dbValues);
     } catch (error) {
@@ -206,10 +207,10 @@ const getEventsfromDB = async (event_owner) => {
  * @param {*} subscriptionId  bot_id to get the token from the DB
  * @returns 
  */
-const findTokenFromDB = async (subscriptionId) => {
+const findTokenFromDB = async (bot_id) => {
     try {
-        const dbQuery = "SELECT * FROM tokens where subscriptionId = $1"
-        const dbValues = [subscriptionId];
+        const dbQuery = "SELECT * FROM tokens where bot_id = $1"
+        const dbValues = [bot_id];
         const dbResults = await db.query(dbQuery, dbValues);
         return dbResults
     } catch (error) {
@@ -218,10 +219,10 @@ const findTokenFromDB = async (subscriptionId) => {
     }
 }
 
-const findTokenFromAccountId = async (accountId) => {
+const findTokenFromAccountId = async (bot_id) => {
     try {
-        const dbQuery = "SELECT * FROM tokens where accountId = $1"
-        const dbValubes = [accountId];
+        const dbQuery = "SELECT * FROM tokens where bot_id = $1"
+        const dbValubes = [bot_id];
         const dbResults = await db.query(dbQuery, dbValubes);
         return dbResults
     } catch (error) {
@@ -234,31 +235,45 @@ const getRSVPDetails = async (eventId) => {
         const dbQuery = "select attendees, attending, not_attending, maybe_attending from events where event_id = $1"
         const dbValubes = [eventId];
         const dbResults = await db.query(dbQuery, dbValubes)
-
+        console.info(`Fetched RSVP details for the event ${eventId}`)
         return dbResults
 
     } catch (error) {
-        console.error('Unable to get event Id');
+        console.error(`Unable to get RSVP details`, { event_id: eventId });
         console.error(error);
     }
 }
 
 
+const addScheduleToDB = async (cron_job_id, event_id) => {
+    try {
+        const dbQuery = "INSERT INTO schedules (cron_job_id,event_id) values ($1, $2) returning *"
+        const dbValues = [cron_job_id, event_id];
+        const dbResults = await db.query(dbQuery, dbValues);
+        console.info('Added SChedule to the DB', { cron_job_id: cron_job_id, event_id: event_id })
+        return dbResults;
+    } catch (error) {
+        console.error(`Unable to get CRON to the DB`, { cron_job_id: cron_job_id, event_id: event_id });
+        console.error(error);
+    }
+}
+
 
 module.exports = {
     createTeamEntry: createTeamEntry,
     createEventEntry: createEventEntry,
-    getEvent: getEvent,
+    getEventFromDB: getEventFromDB,
     getTeamMemebers: getTeamMemebers,
     createCardEntry: createCardEntry,
     updateEventInDB: updateEventInDB,
-    updateRSVP: updateRSVP,
+    updateRSVPInDB: updateRSVPInDB,
     saveToken: saveToken,
     getEventsfromDB: getEventsfromDB,
     getRSVPDetails: getRSVPDetails,
     findTokenFromDB: findTokenFromDB,
     findTokenFromAccountId: findTokenFromAccountId,
-    updateAttendanceInDB: updateAttendanceInDB
+    updateAttendanceInDB: updateAttendanceInDB,
+    addScheduleToDB:addScheduleToDB
 }
 
 

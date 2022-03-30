@@ -1,3 +1,4 @@
+const { addScheduleToDB } = require('../utils/db')
 const momentTZ = require('moment-timezone');
 const fetch = require('node-fetch');
 
@@ -23,53 +24,22 @@ const getTimeZones = async () => {
 
 }
 
-/**
- * Function to create a schedule to send invitation cards to the participants
- * @param {*} event_id event Id of the event,  
- * @param {*} timezone  
- * @param {*} event_type 
- * @param {*} schedule_type 
- * @param {*} bot_id 
- * @returns 
- */
-const createSendInvitationSchedule = async (event_id, timezone, event_type, schedule_type, bot_id) => {
-    let cronURL = process.env.CRON_URL
-    let cronAPIKey = process.env.CRON_API_KEY
-    let incomingCRONURL = process.env.INCOMING_SCHEDULAR_URL
-    let URL = encodeURIComponent(`${incomingCRONURL}?event_id=${event_id}&event_type=${event_type}&schedule_type=${schedule_type}&bot_id=${bot_id}`)
-
-    const dt = new Date()
-    let minute = dt.getMinutes() + 3;
-    let hour = dt.getHours();
-    let date = dt.getDate()
-    let month = dt.getMonth() + 1
-    let year = dt.getFullYear();
-
-    let cronString = `${minute} ${hour} ${date} ${month} * ${year}`
-
-    try {
-        let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${URL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
-        const response = await fetch(cronRequestUrl, {});
-        const data = await response.json();
-        return data
-    } catch (error) {
-        console.error('Unable to Schedule a Cron Job');
-        console.error(error);
-    }
-}
-
-const createReminder = async (event_id, event_date, event_start_time, remindBefore, timezone, event_type, schedule_type, bot_id) => {
+const createReminder = async (event_id, event_date, remindBefore, timezone, event_type, schedule_type, bot_id) => {
 
     try {
         // Create a cron Job to to fire messaging
-        await createCRONJob(event_id, event_date, event_start_time, remindBefore, timezone, event_type, schedule_type, bot_id)
+        let response = await createCRONJob(event_id, event_date, remindBefore, timezone, event_type, schedule_type, bot_id)
+        console.log(response);
+        console.info(`Reminder created`, { event_id: event_id, schedule_type: schedule_type, cron_job_id: response.cron_job_id })
+        await addScheduleToDB(response.cron_job_id, event_id)
+        return true
     } catch (error) {
         console.error('Unable to Schedule a Cron Job');
         console.error(error);
     }
 }
 
-const createCRONJob = async (event_id, event_date, event_start_time, remindBefore, timezone, event_type, schedule_type, bot_id) => {
+const createCRONJob = async (event_id, event_date, remindBefore, timezone, event_type, schedule_type, bot_id) => {
 
     let cronURL = process.env.CRON_URL
     let cronAPIKey = process.env.CRON_API_KEY
@@ -78,7 +48,7 @@ const createCRONJob = async (event_id, event_date, event_start_time, remindBefor
 
     try {
 
-        let cronString = await constructCRONStringForReminder(event_date, event_start_time, remindBefore)
+        let cronString = await constructCRONStringForReminder(event_date, remindBefore)
 
         let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${URL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
 
@@ -94,9 +64,8 @@ const createCRONJob = async (event_id, event_date, event_start_time, remindBefor
 
 }
 
-const constructCRONStringForReminder = async (event_date, event_start_time, remindBefore) => {
-
-    const dt = new Date(`${event_date} ${event_start_time}`)
+const constructCRONStringForReminder = async (event_date, remindBefore) => {
+    const dt = event_date
     let minute = dt.getMinutes();
     let hour = dt.getHours();
     let date = dt.getDate()
@@ -124,7 +93,6 @@ const constructCRONStringForReminder = async (event_date, event_start_time, remi
 module.exports = {
     getTimeZones: getTimeZones,
     createReminder: createReminder,
-    createSendInvitationSchedule: createSendInvitationSchedule
 }
 
 

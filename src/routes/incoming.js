@@ -10,7 +10,7 @@ const { checkinAction } = require('../handlers/checkInHandler')
 
 // Import Utils
 const dbUtil = require('../utils/db')
-const { findTokenFromDB } = require('../utils/db')
+const { findTokenFromDB, getRSVPDetails } = require('../utils/db')
 
 const { renewSubscription } = require('../utils/subscription');
 const { updateCard } = require('../utils/cards')
@@ -23,6 +23,8 @@ router.get('/test', async (req, res) => {
 router.post('/callback', async (req, res) => {
 
     try {
+        // console.log(req.body.body);
+        // console.log(req.body.body.text);
 
         // Get owner_id from the request body to get the token
         const response = await findTokenFromDB(req.body.ownerId);
@@ -57,8 +59,10 @@ router.post('/callback', async (req, res) => {
 
         }
         if (req.body.body.eventType === "PostAdded") {
-
-            let isActionSuccess = await postAdded(req.body.body.text || '', req.body.ownerId, req.body.body.creatorId, req.body.body.groupId, token)
+            // ![:Person](716711005) 22
+            if ((req.body.body.mentions === null) || (req.body.body.mentions[0].id !== `${req.body.ownerId}`)) return
+            let inputText = req.body.body.text.substring(22);
+            let isActionSuccess = await postAdded(inputText || '', req.body.ownerId, req.body.body.creatorId, req.body.body.groupId, token) || false
 
             if (isActionSuccess) {
                 res.json({ 'message': true }).status(200).end()
@@ -83,7 +87,7 @@ router.post('/interactive', async function (req, res) {
 
     try {
 
-        const response = await dbUtil.findTokenFromSubscriptionId(req.body.data.bot_id);
+        const response = await findTokenFromDB(req.body.data.bot_id);
         const token = response.rows[0];
 
         // Handle Create event action submitted from the card
@@ -93,11 +97,13 @@ router.post('/interactive', async function (req, res) {
 
 
             if (isActionSuccess) {
+                console.log('true');
                 res.json({ 'success': true }).status(200).end()
                 return
             }
 
             if (!isActionSuccess) {
+                console.log('false');
                 res.json({ 'success': false }).status(500).end()
                 return
             }
@@ -118,7 +124,7 @@ router.post('/interactive', async function (req, res) {
 
         }
 
-        // 
+
         if ((req.body.data.action === 'invitation') || (req.body.data.action === 'edit_rsvp')) {
 
             let isActionSuccess = await invitationAction(req.body, token)
@@ -138,14 +144,11 @@ router.post('/interactive', async function (req, res) {
             let eventId = req.body.data.event
 
             let result = await dbUtil.getRSVPDetails(eventId);
-            // await teamUtil.getAllAttendees(token, req.body.data.get_rsvp, result.rows[0])
             await updateCard(token, req.body.conversation.id, req.body.card.id, await eventDetails(result.rows[0]));
-
-            // console.log('RESULT', result.rows[0]);
-            // console.log('RESULT', `${result.rows[0].attendees.length} ${result.rows[0].attending.length} ${result.rows[0].not_attending.length} ${result.rows[0].maybe_attending.length}`);
             res.json({ 'success': true }).status(200)
 
         }
+
         if (req.body.data.action === 'checkin') {
             await checkinAction(req.body, token)
             res.json({ 'success': false }).status(500)

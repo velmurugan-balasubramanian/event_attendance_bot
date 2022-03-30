@@ -4,3 +4,4 @@ node_modules
 .bot-aut
 .bot-auth1
 sample
+src/db

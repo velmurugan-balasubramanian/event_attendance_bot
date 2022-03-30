@@ -32,8 +32,8 @@ const sendCard = async (token, card, group) => {
 }
 
 const updateCard = async (token, group, card, content) => {
-    
-    console.log("Updating card...");
+
+    console.info(`Updating card ${card}`);
     platform.auth().setData(token);
     platform.put('/restapi/v1.0/glip/adaptive-cards/' + card, content)
         .catch(function (e) {

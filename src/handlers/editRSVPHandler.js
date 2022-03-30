@@ -3,7 +3,7 @@
 const editRSVPAction = async (cardBody, token) => {
     try {
 
-        let results = await dbUtil.updateRSVP(cardBody.data, cardBody.user.accountId);
+        let results = await dbUtil.updateRSVP(cardBody.data, cardBody.user.extId);
 
         let event = await dbUtil.getEvent(cardBody.data.event_id);
 

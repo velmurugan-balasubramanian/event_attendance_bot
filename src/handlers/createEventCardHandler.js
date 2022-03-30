@@ -33,7 +33,7 @@ createEventCardAction = async (cardbody, token) => {
             createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
             createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 300, cardbody.data.timezone, cardbody.data.event_type, 'fomo_reminder', cardbody.data.bot_id),
             createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 0, cardbody.data.timezone, cardbody.data.event_type, 'checkin', cardbody.data.bot_id),
-            createReminder(results.rows[0].event_id, new Date(), -2, cardbody.data.timezone, cardbody.data.event_type, 'invitation', cardbody.data.bot_id)
+            createReminder(results.rows[0].event_id, new Date().toLocaleString('en-US', { timeZone: cardbody.data.timezone }), -2, cardbody.data.timezone, cardbody.data.event_type, 'invitation', cardbody.data.bot_id)
         ]);
 
         // Update the existing card with the details

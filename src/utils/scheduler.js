@@ -92,11 +92,48 @@ const constructCRONStringForReminder = async (event_date, remindBefore) => {
 
 }
 
+const createSchedules = async (event_id, cardbody) => {
+    await Promise.all([
+        createReminder(event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
+        createReminder(event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
+        createReminder(event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 300, cardbody.data.timezone, cardbody.data.event_type, 'fomo_reminder', cardbody.data.bot_id),
+        createReminder(event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 0, cardbody.data.timezone, cardbody.data.event_type, 'checkin', cardbody.data.bot_id),
+        createReminder(event_id, new Date(new Date().toLocaleString('en-US', { timeZone: cardbody.data.timezone })), -2, cardbody.data.timezone, cardbody.data.event_type, 'invitation', cardbody.data.bot_id)
+    ]);
+}
+
+const updateSchdules = async (schedules, cardBody) => {
+
+    // Delete the Exisiting schedules
+    schedules.forEach(async (schedule) => {
+        await deleteSchedule(schedule.cron_job_id)
+    });
+
+    // Create new Schedules
+    await createSchedules(cardBody.data.event_id, cardBody)
+
+}
+
+const deleteSchedule = async (cron_job_id) => {
+
+    try {
+        let cronURL = process.env.CRON_URL
+        let cronAPIKey = process.env.CRON_API_KEY
+        let cronRequestUrl = `${cronURL}delete?token=${cronAPIKey}&id=${cron_job_id}`
+        let response = await fetch(cronRequestUrl)
+        console.info(`Deleted schedule ${cron_job_id}`)
+    } catch (error) {
+        console.error(error);
+    }
+
+}
 
 
 module.exports = {
+    createSchedules: createSchedules,
     getTimeZones: getTimeZones,
     createReminder: createReminder,
+    updateSchdules: updateSchdules
 }
 
 

@@ -26,7 +26,7 @@ const createEventEntry = async (event_id, event, members) => {
         const dbValubes = [event_id, event.event_name, event.event_origin, event.event_owner, members, [], [], event.event_date, event.event_start_time, event.event_end_time, [], [], [], [], [], []];
         const dbResults = await db.query(dbQuery, dbValubes);
         console.info('Added event to the DB', { event_id: event_id })
-        return dbResults;
+        return dbResults.rows[0];
     } catch (error) {
         console.error(`Unable to add the event to the DB`, { event_id: event_id });
         console.error(error)
@@ -258,6 +258,19 @@ const addScheduleToDB = async (cron_job_id, event_id) => {
     }
 }
 
+const getAllSchedules = async (event_id) => {
+    try {
+        const dbQuery = "select * from schedules where event_id = $1"
+        const dbValubes = [event_id];
+        const dbResults = await db.query(dbQuery, dbValubes)
+        console.info(`Fetched Schedules for the event ${event_id}`)
+        return dbResults.rows
+
+    } catch (error) {
+        console.error(`Unable to get the schedules for the event ${event_id}`);
+
+    }
+}
 
 module.exports = {
     createTeamEntry: createTeamEntry,
@@ -273,7 +286,6 @@ module.exports = {
     findTokenFromDB: findTokenFromDB,
     findTokenFromAccountId: findTokenFromAccountId,
     updateAttendanceInDB: updateAttendanceInDB,
-    addScheduleToDB:addScheduleToDB
+    addScheduleToDB: addScheduleToDB,
+    getAllSchedules: getAllSchedules
 }
-
-

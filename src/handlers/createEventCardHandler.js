@@ -1,11 +1,8 @@
 
-const teamUtil = require('../utils/team');
 const { getTeamDetails } = require('../utils/team');
-
-const dbUtil = require('../utils/db')
 const { createEventEntry, createCardEntry } = require('../utils/db')
 const { updateCard } = require('../utils/cards');
-const { createReminder } = require('../utils/scheduler');
+const { createReminder, createSchedules } = require('../utils/scheduler');
 const { nanoid } = require('nanoid')
 
 
@@ -22,22 +19,24 @@ createEventCardAction = async (cardbody, token) => {
 
         // Add event entry to the event table in the DB
         let event_id = nanoid()
-        let results = await createEventEntry(event_id, cardbody.data, members.members)
+        let event = await createEventEntry(event_id, cardbody.data, members.members)
 
         // Add card entry to the Cards table in the DB
-        // await createCardEntry(cardbody.card.id, cardbody.user.extId, cardbody.conversation.id, results.rows[0])
+        // await createCardEntry(cardbody.card.id, cardbody.user.extId, cardbody.conversation.id, event)
 
+        console.log('event.event_id', event.event_id);
+        await createSchedules(event.event_id, cardbody)
 
-        await Promise.all([
-            createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
-            createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
-            createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 300, cardbody.data.timezone, cardbody.data.event_type, 'fomo_reminder', cardbody.data.bot_id),
-            createReminder(results.rows[0].event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 0, cardbody.data.timezone, cardbody.data.event_type, 'checkin', cardbody.data.bot_id),
-            createReminder(results.rows[0].event_id, new Date(new Date().toLocaleString('en-US', { timeZone: cardbody.data.timezone })), -2, cardbody.data.timezone, cardbody.data.event_type, 'invitation', cardbody.data.bot_id)
-        ]);
+        // await Promise.all([
+        //     createReminder(event.event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
+        //     createReminder(event.event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), cardbody.data.first_reminder, cardbody.data.timezone, cardbody.data.event_type, 'reminder', cardbody.data.bot_id),
+        //     createReminder(event.event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 300, cardbody.data.timezone, cardbody.data.event_type, 'fomo_reminder', cardbody.data.bot_id),
+        //     createReminder(event.event_id, new Date(`${cardbody.data.event_date} ${cardbody.data.event_start_time}`), 0, cardbody.data.timezone, cardbody.data.event_type, 'checkin', cardbody.data.bot_id),
+        //     createReminder(event.event_id, new Date(new Date().toLocaleString('en-US', { timeZone: cardbody.data.timezone })), -2, cardbody.data.timezone, cardbody.data.event_type, 'invitation', cardbody.data.bot_id)
+        // ]);
 
         // Update the existing card with the details
-        let updatedEventCard = await updateEvent(results.rows[0], cardbody.data)
+        let updatedEventCard = await updateEvent(event, cardbody.data)
         await updateCard(token, cardbody.conversation.id, cardbody.card.id, updatedEventCard);
 
         return true

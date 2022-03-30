@@ -1,5 +1,6 @@
 const { updateCard } = require('../utils/cards')
-const { updateEventInDB } = require('../utils/db')
+const { updateEventInDB, getAllSchedules } = require('../utils/db')
+const { updateSchdules } = require('../utils/scheduler')
 const updateEventCard = require('../cards/updateEvent');
 
 /**
@@ -13,8 +14,16 @@ const editEventAction = async (cardBody, token) => {
         console.info(`Editing event ${cardBody.card.event_id}`, cardBody);
         let results = await updateEventInDB(cardBody.data);
 
-        let updatedCard = await updateEventCard(results.rows[0], cardBody.data)
-        await updateCard(token, cardBody.conversation.id, cardBody.card.id, updatedCard);
+        let schedules = await getAllSchedules(cardBody.data.event_id)
+
+
+        // Update schedules to the new data
+        await updateSchdules(schedules, cardBody)
+
+
+
+        // let updatedCard = await updateEventCard(results.rows[0], cardBody.data)
+        // await updateCard(token, cardBody.conversation.id, cardBody.card.id, updatedCard);
         return true
 
     } catch (error) {

@@ -50,7 +50,11 @@ const createCRONJob = async (event_id, event_date, remindBefore, timezone, event
 
         let cronString = await constructCRONStringForReminder(event_date, remindBefore)
 
+
         let cronRequestUrl = `${cronURL}add?token=${cronAPIKey}&url=${URL}&cron_expression=${cronString}&timezone_from=2&timezone=${timezone}`
+
+        console.info('URL', URL)
+        console.info('cronRequestUrl', cronRequestUrl)
 
         const response = await fetch(cronRequestUrl, {});
         const data = await response.json();

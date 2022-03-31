@@ -98,7 +98,6 @@ router.post('/interactive', async function (req, res) {
 
 
         if (req.body.data.action === 'choose_team') {
-            console.log(req.body);
             let createEventCard = await createEvent(req.body.data.bot_id, req.body.data.team, req.body.user.extId, req.body.data.event_type)
             await updateCard(token, req.body.conversation.id, req.body.card.id, createEventCard);
             res.json({ 'success': false }).status(500)

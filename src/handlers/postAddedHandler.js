@@ -1,5 +1,4 @@
-const { sendMessage, sendCard, updateCard } = require('../utils/cards')
-const teamUtil = require('../utils/team')
+const { sendMessage, sendCard } = require('../utils/cards')
 const dbUtil = require('../utils/db')
 const { getPerson, createConversation, checkIsDM, getTeams } = require('../utils/team')
 const { getEventsfromDB } = require('../utils/db')
@@ -39,7 +38,6 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
         console.log('botCommand', botCommand);
         // Ignore the message posted by bot
         if (ownerId === creatorId) {
-            // console.log("Ignoring message posted by bot.");
             return
         }
         else if (CREATE_COMMANDS.includes(botCommand)) {
@@ -48,6 +46,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             isDM = await checkIsDM(token, ownerId, creatorId, groupId)
 
             if (isDM) {
+                console.info(`Going DM route`)
                 let userTeams = await getTeams()
                 let chooseEventCard = await chooseEvent(userTeams, ownerId, botCommand)
                 await sendCard(token, chooseEventCard, groupId);
@@ -68,17 +67,12 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             }
         }
         else if (botCommand === "help") {
-            await sendMessage(token, `
-            Hey  I am **E.V.A.N.S**, I can help you create and plan fun events with your team through Ringcentral Team Messaging, You can mention me and  use one of the following messages to start, 
+            await sendMessage(token, `Hey  I am **E.V.A.N.S**, I can help you create and plan fun events with your team through Ringcentral Team Messaging, You can mention me and  use one of the following messages to start, 
             * create sports event
-
             * create lunch event
-
             * create dinner event
-
             * create concert event
-
-            To Know more about me, please check [this](#).`, groupId)
+To Know more about me, Click [here](#).`, groupId)
         }
         else if (botCommand === 'get details') {
 
@@ -93,9 +87,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             await sendCard(token, getDetailsCard, groupId);
         }
         else {
-            await sendMessage(token, "I do not understand '" +
-                botCommand +
-                "'", groupId)
+            await sendMessage(token, "I do not understand '" + botCommand + "'", groupId)
         }
 
         return true

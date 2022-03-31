@@ -14,8 +14,6 @@ const { findTokenFromDB } = require('../utils/db')
 const { renewSubscription } = require('../utils/subscription');
 const { updateCard } = require('../utils/cards')
 const eventDetails = require('../cards/eventDetail')
-
-
 const createEvent = require('../cards/createEvent');
 
 

@@ -105,6 +105,7 @@ const editRSVP = async (event, cardBody) => {
                             "type": "Input.ChoiceSet",
                             "id": "rsvp",
                             "value": cardBody.rsvp,
+                            "isRequired": true,
                             "choices": [
                                 {
                                     "title": "Yes",
@@ -129,6 +130,7 @@ const editRSVP = async (event, cardBody) => {
                             "type": "Input.ChoiceSet",
                             "id": "vaccination",
                             "value": cardBody.vaccination,
+                            "isRequired": true,
                             "choices": [
                                 {
                                     "title": "Yes",

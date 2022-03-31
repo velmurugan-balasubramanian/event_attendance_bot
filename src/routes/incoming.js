@@ -11,7 +11,6 @@ const { checkinAction } = require('../handlers/checkInHandler')
 // Import Utils
 const dbUtil = require('../utils/db')
 const { findTokenFromDB } = require('../utils/db')
-
 const { renewSubscription } = require('../utils/subscription');
 const { updateCard } = require('../utils/cards')
 const eventDetails = require('../cards/eventDetail')
@@ -27,8 +26,6 @@ router.get('/test', async (req, res) => {
 router.post('/callback', async (req, res) => {
 
     try {
-        // console.log(req.body.body);
-        // console.log(req.body.body.text);
 
         // Get owner_id from the request body to get the token
         const response = await findTokenFromDB(req.body.ownerId);
@@ -63,7 +60,7 @@ router.post('/callback', async (req, res) => {
 
         }
         if (req.body.body.eventType === "PostAdded") {
-            // ![:Person](716711005) 22
+
             if ((req.body.body.mentions === null) || (req.body.body.mentions[0].id !== `${req.body.ownerId}`)) return
             let inputText = req.body.body.text.substring(22);
             let isActionSuccess = await postAdded(inputText || '', req.body.ownerId, req.body.body.creatorId, req.body.body.groupId, token) || false

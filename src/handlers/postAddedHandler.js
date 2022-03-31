@@ -67,10 +67,21 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
                 return
             }
         }
-        else if (botCommand === "bot help") {
-            await sendMessage(token, "Hey, using me you can create and schedule events including sports events, Lunch, dinner or coffee events and concerts ", req.body.body.groupId)
+        else if (botCommand === "help") {
+            await sendMessage(token, `
+            Hey  I am **E.V.A.N.S**, I can help you create and plan fun events with your team through Ringcentral Team Messaging, You can mention me and  use one of the following messages to start, 
+            * create sports event
+
+            * create lunch event
+
+            * create dinner event
+
+            * create concert event
+            
+            To Know more about me, please check [this](#).
+            `, groupId)
         }
-        else if (botCommand === 'bot get details') {
+        else if (botCommand === 'get details') {
 
             let results = await dbUtil.getEventsfromDB(creatorId)
 

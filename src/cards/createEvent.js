@@ -162,7 +162,7 @@ const createEvent = async (bot_id, event_origin, event_owner, text) => {
             },
             {
                 "type": "TextBlock",
-                "text": "Remind attendeed",
+                "text": "Remind Participants",
                 "wrap": true
             },
             {

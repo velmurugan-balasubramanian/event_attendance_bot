@@ -77,9 +77,8 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             * create dinner event
 
             * create concert event
-            
-            To Know more about me, please check [this](#).
-            `, groupId)
+
+            To Know more about me, please check [this](#).`, groupId)
         }
         else if (botCommand === 'get details') {
 

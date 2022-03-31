@@ -10,7 +10,7 @@ const checkinAction = async (card, token) => {
         let event = result.rows[0]
 
         let updatedCheckInCard = await checkInCard(event.event_name)
-        await updateCard(token, cardbody.conversation.id, cardbody.card.id, updatedCheckInCard);
+        await updateCard(token, card.conversation.id, card.card.id, updatedCheckInCard);
 
     } catch (error) {
         console.error('Unable to checkin to the event');

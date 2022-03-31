@@ -91,7 +91,6 @@ const chooseTeam = async (teams, bot_id, text) => {
 
     }
 
-    // console.log('card', card);
     return card
 
 }

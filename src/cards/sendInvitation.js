@@ -62,7 +62,7 @@ const sendInvitation = (bot_id, event_type, event) => {
                                 "size": "large",
                                 "color": "dark",
                                 "weight": "Bolder",
-                                "text": `You have been invited to ${event.event_name} event`,
+                                "text": `Invitation to ${event.event_name}`,
                                 "wrap": true
                             }
                         ],
@@ -73,14 +73,14 @@ const sendInvitation = (bot_id, event_type, event) => {
             {
                 "type": "Input.Text",
                 "id": "event_text",
-                "value": `You have been invited to ${event.event_name} event`,
+                "value": `Invitation to ${event.event_name}`,
                 "isVisible": false,
             },
             {
                 "type": "TextBlock",
                 "size": "Medium",
                 "weight": "Bolder",
-                "text": `You have been invited to ${event.event_name} event on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time} and ${event.event_end_time}`,
+                "text": `You have been invited to ${event.event_name} on ${new Date(event.event_date).toLocaleDateString()} , between ${event.event_start_time} and ${event.event_end_time}`,
                 "wrap": true
             },
             {
@@ -97,7 +97,8 @@ const sendInvitation = (bot_id, event_type, event) => {
             {
                 "type": "Input.ChoiceSet",
                 "id": "rsvp",
-                "value": "1",
+                "isRequired": true,
+                "value": "yes",
                 "choices": [
                     {
                         "title": "Yes",
@@ -121,7 +122,8 @@ const sendInvitation = (bot_id, event_type, event) => {
             {
                 "type": "Input.ChoiceSet",
                 "id": "vaccination",
-                "value": "1",
+                "isRequired": true,
+                "value": "yes",
                 "choices": [
                     {
                         "title": "Yes",

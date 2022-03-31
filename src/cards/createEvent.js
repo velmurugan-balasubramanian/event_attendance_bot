@@ -79,7 +79,7 @@ const createEvent = async (bot_id, event_origin, event_owner, text) => {
                                 "size": "large",
                                 "color": "dark",
                                 "weight": "Bolder",
-                                "text": `Create a ${eventType} Event`,
+                                "text": `Create ${eventType} Event`,
                                 "wrap": true
                             }
                         ],

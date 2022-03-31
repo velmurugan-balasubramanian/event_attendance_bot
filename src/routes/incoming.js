@@ -10,7 +10,7 @@ const { checkinAction } = require('../handlers/checkInHandler')
 
 // Import Utils
 const dbUtil = require('../utils/db')
-const { findTokenFromDB, getRSVPDetails } = require('../utils/db')
+const { findTokenFromDB } = require('../utils/db')
 
 const { renewSubscription } = require('../utils/subscription');
 const { updateCard } = require('../utils/cards')
@@ -95,8 +95,6 @@ router.post('/interactive', async function (req, res) {
         const token = response.rows[0];
 
 
-
-
         if (req.body.data.action === 'choose_team') {
             let createEventCard = await createEvent(req.body.data.bot_id, req.body.data.team, req.body.user.extId, req.body.data.event_type)
             await updateCard(token, req.body.conversation.id, req.body.card.id, createEventCard);
@@ -164,6 +162,7 @@ router.post('/interactive', async function (req, res) {
         }
 
         if (req.body.data.action === 'checkin') {
+
             await checkinAction(req.body, token)
             res.json({ 'success': false }).status(500)
         }

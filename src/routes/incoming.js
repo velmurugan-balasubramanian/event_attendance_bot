@@ -16,6 +16,10 @@ const { renewSubscription } = require('../utils/subscription');
 const { updateCard } = require('../utils/cards')
 const eventDetails = require('../cards/eventDetail')
 
+
+const createEvent = require('../cards/createEvent');
+
+
 router.get('/test', async (req, res) => {
     res.json({ message: 'ok' }).status(200).end()
 })
@@ -89,6 +93,17 @@ router.post('/interactive', async function (req, res) {
 
         const response = await findTokenFromDB(req.body.data.bot_id);
         const token = response.rows[0];
+
+
+
+
+        if (req.body.data.action === 'choose_team') {
+            console.log(req.body);
+            let createEventCard = await createEvent(req.body.data.bot_id, req.body.data.team, req.body.user.extId, req.body.data.event_type)
+            await updateCard(token, req.body.conversation.id, req.body.card.id, createEventCard);
+            res.json({ 'success': false }).status(500)
+
+        }
 
         // Handle Create event action submitted from the card
         if (req.body.data.action === 'create_event') {

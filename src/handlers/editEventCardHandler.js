@@ -22,8 +22,8 @@ const editEventAction = async (cardBody, token) => {
 
 
 
-        // let updatedCard = await updateEventCard(results.rows[0], cardBody.data)
-        // await updateCard(token, cardBody.conversation.id, cardBody.card.id, updatedCard);
+        let updatedCard = await updateEventCard(results.rows[0], cardBody.data)
+        await updateCard(token, cardBody.conversation.id, cardBody.card.id, updatedCard);
         return true
 
     } catch (error) {

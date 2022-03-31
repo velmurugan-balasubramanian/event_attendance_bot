@@ -69,6 +69,28 @@ const createConversation = async (token, members) => {
 
 }
 
+const checkIsDM = async (token, ownerId, creatorId, groupId) => {
+    try {
+
+        let conversation = await createConversation(token, {
+            members: [
+                {
+                    id: ownerId
+                },
+                {
+                    id: creatorId
+                }
+            ]
+        })
+
+        if (conversation.id === groupId) {
+            return true
+        }
+    } catch (error) {
+
+    }
+}
+
 /**
  * 
  * @param {*} bot_id 
@@ -138,10 +160,39 @@ const getAllAttendees = async (token, rsvp, status) => {
 
 }
 
+const getTeams = async (token) => {
+    try {
+
+        console.time('get teams')
+        await platform.auth().setData(token);
+        let response = await platform.get(`/restapi/v1.0/glip/teams?recordCount=50`)
+        let teams = response.json();
+        
+        // console.log('Teams', teams);
+        let teamSelection = teams.records.map((team) => {
+            if (team.status === 'Active') {
+                const value = team['id'] || 'sample'
+                const title = team['name'] || 'Sample'
+                return { title, value }
+            }
+        });
+        console.timeEnd('get teams')
+        return teamSelection
+
+    } catch (error) {
+
+        console.error(`Unable to get team lists`);
+        console.error(error);
+
+    }
+}
+
 module.exports = {
     getTeamDetails: getTeamDetails,
     getPerson: getPerson,
     createConversation: createConversation,
     notifyAttendees: notifyAttendees,
-    getAllAttendees: getAllAttendees
+    getAllAttendees: getAllAttendees,
+    checkIsDM: checkIsDM,
+    getTeams: getTeams
 }

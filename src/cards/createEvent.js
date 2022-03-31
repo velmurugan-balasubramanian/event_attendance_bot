@@ -17,6 +17,7 @@ const createEvent = async (bot_id, event_origin, event_owner, text) => {
     if (text.indexOf('dinner') >= 0 || text.indexOf('Dinner') >= 0) eventType = 'dinner'
     if (text.indexOf('lunch') >= 0 || text.indexOf('Lunch') >= 0) eventType = 'lunch'
 
+    console.log('Eventtype', eventType);
 
     let card = {
         "type": "AdaptiveCard",

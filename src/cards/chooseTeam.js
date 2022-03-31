@@ -11,10 +11,10 @@ const chooseTeam = async (teams, bot_id, text) => {
         'lunch': 'https://img.icons8.com/stickers/344/pizza.png'
     }
 
-    if ((text.indexOf('sports') || text.indexOf('Sports') || text.indexOf('game')) > 1) eventType = 'sports'
-    if (text.indexOf('concert') > 1) eventType = 'concert'
-    if ((text.indexOf('dinner') || text.indexOf('Dinner')) > 1) eventType = 'dinner'
-    if ((text.indexOf('Lunch') || text.indexOf('lunch')) > 1) eventType = 'lunch'
+    if (text.indexOf('sports') >= 0 || text.indexOf('Sports') >= 0 || text.indexOf('game') >= 0) eventType = 'sports'
+    if (text.indexOf('concert') >= 0 || text.indexOf('Concert') >= 0) eventType = 'concert'
+    if (text.indexOf('dinner') >= 0 || text.indexOf('Dinner') >= 0) eventType = 'dinner'
+    if (text.indexOf('lunch') >= 0 || text.indexOf('Lunch') >= 0) eventType = 'lunch'
 
     let card = {
         "type": "AdaptiveCard",

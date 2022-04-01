@@ -48,6 +48,7 @@ const postAdded = async (botCommand = '', ownerId, creatorId, groupId, token) =>
             if (isDM) {
                 console.info(`Going DM route`)
                 let userTeams = await getTeams()
+                console.info('Teams found', userTeams)
                 let chooseEventCard = await chooseEvent(userTeams, ownerId, botCommand)
                 await sendCard(token, chooseEventCard, groupId);
                 return

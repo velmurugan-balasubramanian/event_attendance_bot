@@ -165,7 +165,7 @@ const getTeams = async (token) => {
 
         console.time('get teams')
         await platform.auth().setData(token);
-        let response = await platform.get(`/restapi/v1.0/glip/teams?recordCount=50`)
+        let response = await platform.get(`/restapi/v1.0/glip/teams?recordCount=250`)
         let teams = response.json();
         
         // console.log('Teams', teams);

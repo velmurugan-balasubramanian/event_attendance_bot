@@ -175,6 +175,7 @@ const getTeams = async (token) => {
                 const title = team['name'] || 'Sample'
                 return { title, value }
             }
+            else return
         });
         console.timeEnd('get teams')
         return teamSelection

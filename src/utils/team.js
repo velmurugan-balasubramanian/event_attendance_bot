@@ -170,12 +170,10 @@ const getTeams = async (token) => {
         
         // console.log('Teams', teams);
         let teamSelection = teams.records.map((team) => {
-            if (team.status === 'Active') {
                 const value = team['id'] || 'sample'
                 const title = team['name'] || 'Sample'
                 return { title, value }
-            }
-            else return
+
         });
         console.timeEnd('get teams')
         return teamSelection

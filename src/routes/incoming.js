@@ -24,11 +24,10 @@ router.get('/test', async (req, res) => {
 router.post('/callback', async (req, res) => {
 
     try {
-
         // Get owner_id from the request body to get the token
         const response = await findTokenFromDB(req.body.ownerId);
         const token = response.rows[0];
-
+        console.log(req.body.body.text);
         let validationToken = req.get('Validation-Token');
 
         if (validationToken) {
@@ -60,7 +59,7 @@ router.post('/callback', async (req, res) => {
         if (req.body.body.eventType === "PostAdded") {
 
             if ((req.body.body.mentions === null) || (req.body.body.mentions[0].id !== `${req.body.ownerId}`)) return
-            let inputText = req.body.body.text.substring(22);
+            let inputText = req.body.body.text.substring(13 + req.body.ownerId.length);
             let isActionSuccess = await postAdded(inputText || '', req.body.ownerId, req.body.body.creatorId, req.body.body.groupId, token) || false
 
             if (isActionSuccess) {

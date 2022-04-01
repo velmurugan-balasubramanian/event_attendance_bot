@@ -28,6 +28,8 @@ router.post('/callback', async (req, res) => {
         const response = await findTokenFromDB(req.body.ownerId);
         const token = response.rows[0];
 
+        console.log('RAW text', req.body.body.text);
+
         let validationToken = req.get('Validation-Token');
 
         if (validationToken) {

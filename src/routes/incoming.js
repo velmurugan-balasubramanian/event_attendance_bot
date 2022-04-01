@@ -27,7 +27,7 @@ router.post('/callback', async (req, res) => {
         // Get owner_id from the request body to get the token
         const response = await findTokenFromDB(req.body.ownerId);
         const token = response.rows[0];
-        console.log(req.body.body.text);
+
         let validationToken = req.get('Validation-Token');
 
         if (validationToken) {

@@ -18,7 +18,7 @@ const subscribeToEvents = async (token) => {
                 "transportType": "WebHook",
                 "address": REDIRECT_HOST + "/incoming/callback"
             },
-            "expiresIn": 604799
+            "expiresIn": 630720000
         };
         let response = await platform.post('/subscription', requestData)
         let subscriptionId = response.json().id
@@ -26,7 +26,7 @@ const subscribeToEvents = async (token) => {
         return subscriptionId
 
     } catch (error) {
-
+        console.error('Unable to renew Subscription');
         console.error(error);
 
     }
@@ -34,16 +34,16 @@ const subscribeToEvents = async (token) => {
 }
 
 const renewSubscription = async (id) => {
-    console.log("Renewing Subscription");
-    let response = await platform.post('/subscription/' + id + "/renew")
-    return response
-    // .then(function (response) {
-    //     var data = JSON.parse(response.text());
-    //     console.log("Subscription renewed. Next renewal:" + data.expirationTime);
-    // }).catch(function (e) {
-    //     console.log("Error subscribing to bot events: ", e);
-    //     throw e;
-    // });
+    console.info("Renewing Subscription");
+    try {
+        let response = await platform.post('/subscription/' + id + "/renew")
+        let result = await response.json()
+        console.log('safs', result);
+        return response
+    } catch (error) {
+        console.error('Unable to renew subscription');
+        console.error(error);
+    }
 }
 
 module.exports = {
